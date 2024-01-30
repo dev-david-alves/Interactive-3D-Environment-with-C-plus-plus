@@ -15,17 +15,19 @@ using namespace std;
 #include <utils/perlinNoise.h>
 
 
-int height = 64; // y
-int width = 64;  // x
-int depth = 64;  // z
+int height = 32; // y
+int width = 32;  // x
+int depth = 32;  // z
 float scaleFactor = 0.6;
 
 vector<vector<vector<int>>> terrain(height, vector<vector<int>>(width, vector<int>(depth, 0)));
 
 int selectedObj = -1;
 vector<Brick> brickArr;
+Brick* nBrick;
 
 vector<Object*> objects;
+Tree* nTree;
 
 void createTerrain() {
     PerlinNoise perlin;
@@ -70,20 +72,26 @@ void drawFloor() {
     }
 }
 
+int calculateOffsetY(int x, int z) {
+    int lastOne = 0;
+
+    for(int i = 0; i < height; i++) {
+        if(terrain[i][x][z] != 1) break;
+        lastOne = i;
+    }
+
+    return lastOne;
+}
+
 void createTrees(int numT) {
     for(int i = 0; i < numT; i++) {
         int x = rand() % width;
         int z = rand() % depth;
 
-        int lastOne = 0;
+        int y = calculateOffsetY(x, z);
 
-        for(int i = 0; i < height; i++) {
-            if(terrain[i][x][z] != 1) break;
-            lastOne = i;
-        }
-
-        Tree* tree = new Tree(Vetor3D(x, lastOne + 1, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
-        objects.push_back(tree);
+        nTree = new Tree(Vetor3D(x, y + scaleFactor / 2, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nTree);
     }
 }
 
@@ -95,20 +103,26 @@ void toggleSelectObj(bool select = true) {
     if (selectedObj != -1) {
         Object* objPtr = objects[selectedObj];
         objPtr->setSelected(select);
+
+        if(!select) objPtr->setCanDrawOrigin(false);
     }
 }
+
+float offsetX = width / 2.0;
+float offsetZ = depth / 2.0;
+float offsetY = 15.0;
 
 void draw()
 {
     GUI::displayInit();
 
-    GUI::drawOrigin(1.0);
     GUI::setLight(1, 0, 24, 24, true, false);
     glDisable(GL_CULL_FACE);
     
     // Custom
     glScalef(scaleFactor, scaleFactor, scaleFactor);
-    glTranslatef((float) width / -2, 0, (float) depth / -2);
+    GUI::drawOrigin(3.0);
+    glTranslatef(-offsetX, 0, -offsetZ);
 
     drawFloor();
 
@@ -135,9 +149,6 @@ void draw()
         glutGUI::trans_obj = false;
     }
 
-
-    // drawTree();
-
     // fruit.draw(terrain);
     
     // glPushMatrix();
@@ -158,11 +169,6 @@ void keyboard(unsigned char key, int x, int y)
 
     switch (key)
     {
-    // case 't':
-    //     toggleSelectObj(false);
-    //     selectedObj = -1;
-    //     glutGUI::trans_obj = !glutGUI::trans_obj;
-    //     break;
     case 'l':
         toggleSelectObj(false);
         selectedObj = -1;
@@ -209,6 +215,33 @@ void keyboard(unsigned char key, int x, int y)
             Object* objPtr = objects[selectedObj];
             objPtr->setCanDrawOrigin(!objPtr->getCanDrawOrigin());
         }
+
+        break;
+    case '2': 
+        glutGUI::sclMode = false;
+        toggleSelectObj(false);
+
+        nTree = new Tree(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nTree);
+        selectedObj = static_cast<int>(objects.size()) - 1;
+
+        break;
+    case '[': 
+        if(selectedObj != -1) {
+            objects.erase(objects.begin() + selectedObj);
+            selectedObj--;
+
+            if(selectedObj < 0 && static_cast<int>(objects.size()) > 0) {
+                selectedObj = static_cast<int>(objects.size()) - 1;
+            }
+        }
+
+        break;
+    case ']': 
+        if(static_cast<int>(objects.size()) > 0) {
+            objects.pop_back();
+        }
+
         break;
     default:
         break;
@@ -219,6 +252,6 @@ int main()
 {
     cout << "Running..." << endl;
     createTerrain();
-    createTrees(10);
+    createTrees(5);
     GUI gui = GUI(800, 600, draw, keyboard);
 }

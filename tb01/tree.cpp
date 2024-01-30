@@ -64,18 +64,16 @@ void Tree::draw(vector<vector<vector<int>>> &terrain) {
     Vetor3D rot = this->getRotation();
     Vetor3D scl = this->getScaling();
 
-
     glPushMatrix();
         glTranslatef(tra.x, tra.y, tra.z);
         glRotatef(rot.x, 1, 0, 0);
         glRotatef(rot.y, 0, 1, 0);
         glRotatef(rot.z, 0, 0, 1);
+
+        this->drawOrigin(3.0);
+        
         glScalef(scl.x, scl.y, scl.z);
 
-        glPushMatrix();
-            glTranslatef(0, -1, 0);
-            this->drawOrigin(3.0);
-        glPopMatrix();
 
         glPushMatrix();
             glScalef(0.3, 1, 0.3);
@@ -91,18 +89,8 @@ void Tree::draw(vector<vector<vector<int>>> &terrain) {
                 glBegin(GL_QUAD_STRIP);
                     for(int j = 0; j <= 360; j+= 5) {
                         glNormal3f(cos(j), 0, sin(j));
-                        glVertex3f(cos(j) * 2, 1, sin(j) * 2);
-                        glVertex3f(cos(j), 0, sin(j));
-                    }
-                glEnd();
-            glPopMatrix();
-
-            glPushMatrix();
-                glBegin(GL_QUAD_STRIP);
-                    for(int j = 0; j <= 360; j+= 5) {
-                        glNormal3f(cos(j), 1, sin(j));
-                        glVertex3f(cos(j), 2, sin(j));
-                        glVertex3f(cos(j), 0, sin(j));
+                        glVertex3f(cos(j) * 2, 0, sin(j) * 2);
+                        glVertex3f(cos(j), -1, sin(j));
                     }
                 glEnd();
             glPopMatrix();
@@ -111,15 +99,25 @@ void Tree::draw(vector<vector<vector<int>>> &terrain) {
                 glBegin(GL_QUAD_STRIP);
                     for(int j = 0; j <= 360; j+= 5) {
                         glNormal3f(cos(j), 0, sin(j));
-                        glVertex3f(cos(j) * 2, 3, sin(j) * 2);
-                        glVertex3f(cos(j), 2, sin(j));
+                        glVertex3f(cos(j), 3, sin(j));
+                        glVertex3f(cos(j), 1, sin(j));
+                    }
+                glEnd();
+            glPopMatrix();
+
+            glPushMatrix();
+                glBegin(GL_QUAD_STRIP);
+                    for(int j = 0; j <= 360; j+= 5) {
+                        glNormal3f(cos(j), 0, sin(j));
+                        glVertex3f(cos(j) * 2, 4, sin(j) * 2);
+                        glVertex3f(cos(j), 3, sin(j));
                     }
                 glEnd();
             glPopMatrix();
         glPopMatrix();
 
         glPushMatrix();
-            glTranslatef(-2.7, 3, -2.2);
+            glTranslatef(-2.7, 4, -2.2);
             for (size_t i = 0; i < this->leaves.size(); ++i) {
                 for (size_t j = 0; j < this->leaves[i].size(); ++j) {
                     for (size_t k = 0; k < this->leaves[i][j].size(); ++k) {
