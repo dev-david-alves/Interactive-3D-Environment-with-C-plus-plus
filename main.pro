@@ -33,7 +33,6 @@ SOURCES += main.cpp \
     tb01/object.cpp \
     tb01/brick.cpp \
     tb01/tree.cpp \
-    tb01/model.cpp \
     utils/perlinNoise.cpp \
     utils/utils.cpp
 
@@ -50,6 +49,5 @@ HEADERS += \
     headers/object.h \
     headers/brick.h \
     headers/tree.h \
-    headers/model.h \
     utils/perlinNoise.h \
     utils/utils.h

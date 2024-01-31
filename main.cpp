@@ -2,18 +2,20 @@
 #include <stdlib.h>
 #include <time.h>  
 #include <memory>
+#include <vector>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
-#include <gui.h>
-#include <vector>
 
+#include <gui.h>
 #include <headers/object.h>
 #include <headers/brick.h>
 #include <headers/tree.h>
-#include <headers/model.h>
 #include <utils/perlinNoise.h>
 
+// Declarations
 
 int height = 32; // y
 int width = 32;  // x
@@ -23,11 +25,137 @@ float scaleFactor = 0.6;
 vector<vector<vector<int>>> terrain(height, vector<vector<int>>(width, vector<int>(depth, 0)));
 
 int selectedObj = -1;
-vector<Brick> brickArr;
+vector<Object*> brickArr;
 Brick* nBrick;
 
 vector<Object*> objects;
 Tree* nTree;
+
+string defultFilePath = "./csv/objects.csv";
+
+// -----------
+
+// Helper functions
+
+string v3dToString(Vetor3D v3d) {
+    return to_string(v3d.x) + "," + to_string(v3d.y) + "," + to_string(v3d.z);
+}
+
+Vetor3D stringToV3d(string Sx, string Sy, string Sz) {
+    return Vetor3D(stof(Sx), stof(Sy), stof(Sz));
+}
+
+void createCSV(vector<Object*> v, const string& filename = defultFilePath) {
+    ofstream file(filename);
+
+    if (file.is_open()) {
+        for(auto el: v) {
+            Vetor3D tra = el->getTranslation();
+            Vetor3D rot = el->getRotation();
+            Vetor3D scl = el->getScaling();
+            int isSelected = el->getIsSelected();
+            int canDrawOrigin = el->getCanDrawOrigin();
+
+            int selectedIndex = selectedObj;
+
+            if(!isSelected) selectedIndex = -1;
+
+            string phrase = v3dToString(tra) + "," + v3dToString(rot) + "," + v3dToString(scl) + "," + to_string(isSelected) + "," + to_string(selectedIndex) + "," + to_string(canDrawOrigin) + "," + el->getType() + "\n";
+            file << phrase;
+        }
+
+        file.close();
+
+        cout << "CSV file created successfully.\n";
+    } else {
+        cerr << "Error creating CSV file.\n";
+    }
+}
+
+void readCSV(const string& filename= defultFilePath) {
+    ifstream file(filename);
+
+    if (file.is_open()) {
+        string line;
+
+        // Read and display data
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string Tx, Ty, Tz, Rx, Ry, Rz, Sx, Sy, Sz, isSelected, selectedIndex, canDrawOrigin, type;
+
+            // Translation
+            getline(ss, Tx, ',');
+            getline(ss, Ty, ',');
+            getline(ss, Tz, ',');
+            
+            // Rotation
+            getline(ss, Rx, ',');
+            getline(ss, Ry, ',');
+            getline(ss, Rz, ',');
+
+            // Scaling
+            getline(ss, Sx, ',');
+            getline(ss, Sy, ',');
+            getline(ss, Sz, ',');
+
+            // State
+            getline(ss, isSelected, ',');
+            getline(ss, selectedIndex, ',');
+            getline(ss, canDrawOrigin, ',');
+
+            // Type
+            getline(ss, type, ',');
+
+            if(type == "brick") {
+                    int x = stoi(Tx);
+                    int y = stoi(Ty);
+                    int z = stoi(Tz);
+
+                    Vetor3D initialPos = Vetor3D(x, y, z);
+                    terrain[y][x][z] = 1;
+                    nBrick = new Brick(initialPos);
+                    nBrick->setIsSelected(stoi(isSelected));
+                    nBrick->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                    if(nBrick->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                    brickArr.push_back(nBrick);
+            } else if(type == "tree") {
+                nTree = new Tree(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                nTree->setIsSelected(stoi(isSelected));
+                nTree->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                if(nTree->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                objects.push_back(nTree);
+            }
+        }
+
+        file.close();
+    } else {
+        cerr << "Error opening CSV file.\n";
+    }
+}
+
+bool isFileEmpty(const string& filename= defultFilePath) {
+    ifstream file(filename);
+
+    if (!file.is_open()) {
+        cout << "File: " << filename << " does not exist!\n";
+        return true;
+    }
+
+    file.seekg(0, ios::end);
+    size_t fileSize = file.tellg();
+    file.close();
+
+    if(fileSize == 0) cout << "File: " << filename << " is empty!\n";
+    else if(fileSize == 0) cout << "File: " << filename << " is not empty!\n";
+
+    return fileSize == 0;
+}
+
+// ----------------------------
 
 void createTerrain() {
     PerlinNoise perlin;
@@ -48,8 +176,8 @@ void createTerrain() {
                 if(k < yHeight) {
                     Vetor3D initialPos = Vetor3D(x, k, z);
                     terrain[k][x][z] = 1;
-                    brickArr.push_back(Brick(initialPos));
-
+                    nBrick = new Brick(initialPos);
+                    brickArr.push_back(nBrick);
                 }
             }
         }
@@ -58,7 +186,7 @@ void createTerrain() {
 
 void drawFloor() {
     for(auto b: brickArr) {
-        Vetor3D v = b.getTranslation();
+        Vetor3D v = b->getTranslation();
 
         int x = v.x;
         int y = v.y;
@@ -66,7 +194,7 @@ void drawFloor() {
 
         if(terrain[y][x][z] == 1) {
             glPushMatrix(); 
-                b.draw(terrain);
+                b->draw(terrain);
             glPopMatrix();
         }
     }
@@ -95,14 +223,10 @@ void createTrees(int numT) {
     }
 }
 
-Model fruit = Model(Vetor3D(10, 0, 10), Vetor3D(1, 1, 1), "./3ds/fruit.3DS");
-Model bridge1 = Model(Vetor3D(47, 0, 40), Vetor3D(2.3, 2.3, 2.3), "./3ds/bridge.3DS");
-Model bridge2 = Model(Vetor3D(37, 0, 12), Vetor3D(2.3, 2.3, 2.3), "./3ds/bridge.3DS");
-
 void toggleSelectObj(bool select = true) {
     if (selectedObj != -1) {
         Object* objPtr = objects[selectedObj];
-        objPtr->setSelected(select);
+        objPtr->setIsSelected(select);
 
         if(!select) objPtr->setCanDrawOrigin(false);
     }
@@ -243,6 +367,11 @@ void keyboard(unsigned char key, int x, int y)
         }
 
         break;
+    case 'S': 
+        createCSV(brickArr, "./csv/floor.csv");
+        createCSV(objects);
+
+        break;
     default:
         break;
     }
@@ -251,7 +380,20 @@ void keyboard(unsigned char key, int x, int y)
 int main()
 {
     cout << "Running..." << endl;
-    createTerrain();
-    createTrees(5);
+    
+
+    if(isFileEmpty("./csv/floor.csv")) {
+        createTerrain();
+    } else {
+        readCSV("./csv/floor.csv");
+    }
+
+    if(isFileEmpty()) {
+        createTrees(5);
+    } else {
+        readCSV();
+    }
+
     GUI gui = GUI(800, 600, draw, keyboard);
+
 }

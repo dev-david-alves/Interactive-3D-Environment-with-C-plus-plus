@@ -34,6 +34,7 @@ Tree::Tree(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialScale) {
     this->setTranslation(initialPos);
     this->setRotation(initialRotation);
     this->setScaling(initialScale);
+    this->setType("tree");
     this->leaves = createLeaves();
 };
 
@@ -46,7 +47,7 @@ void Tree::draw(vector<vector<vector<int>>> &terrain) {
     float g = 1.0;
     float b = 0.0;
 
-    if(this->getSelected()) {
+    if(this->getIsSelected()) {
         r = 1.0;
         g = 0.0;
     }
@@ -78,7 +79,7 @@ void Tree::draw(vector<vector<vector<int>>> &terrain) {
         glPushMatrix();
             glScalef(0.3, 1, 0.3);
 
-            if(this->getSelected()) {
+            if(this->getIsSelected()) {
                 GUI::setColor(1.0, 0.0, 0.0); 
             } else {
                 GUI::setColor(0.6, 0.2, 0.2); 

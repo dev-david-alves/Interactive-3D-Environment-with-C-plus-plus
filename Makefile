@@ -65,7 +65,6 @@ SOURCES       = main.cpp \
 		tb01/object.cpp \
 		tb01/brick.cpp \
 		tb01/tree.cpp \
-		tb01/model.cpp \
 		utils/perlinNoise.cpp \
 		utils/utils.cpp 
 OBJECTS       = run/.obj/main.o \
@@ -81,7 +80,6 @@ OBJECTS       = run/.obj/main.o \
 		run/.obj/object.o \
 		run/.obj/brick.o \
 		run/.obj/tree.o \
-		run/.obj/model.o \
 		run/.obj/perlinNoise.o \
 		run/.obj/utils.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -166,7 +164,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		headers/object.h \
 		headers/brick.h \
 		headers/tree.h \
-		headers/model.h \
 		utils/perlinNoise.h \
 		utils/utils.h main.cpp \
 		bib/Camera.cpp \
@@ -181,7 +178,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tb01/object.cpp \
 		tb01/brick.cpp \
 		tb01/tree.cpp \
-		tb01/model.cpp \
 		utils/perlinNoise.cpp \
 		utils/utils.cpp
 QMAKE_TARGET  = main
@@ -393,7 +389,6 @@ run/.obj/main.o: main.cpp gui_glut/gui.h \
 		headers/object.h \
 		headers/brick.h \
 		headers/tree.h \
-		headers/model.h \
 		utils/perlinNoise.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/main.o main.cpp
 
@@ -478,18 +473,6 @@ run/.obj/tree.o: tb01/tree.cpp headers/tree.h \
 		headers/object.h \
 		utils/utils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/tree.o tb01/tree.cpp
-
-run/.obj/model.o: tb01/model.cpp headers/model.h \
-		gui_glut/gui.h \
-		gui_glut/extra.h \
-		bib/CameraDistante.h \
-		bib/Camera.h \
-		bib/Vetor3D.h \
-		bib/CameraJogo.h \
-		bib/Desenha.h \
-		bib/model3ds.h \
-		headers/object.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/model.o tb01/model.cpp
 
 run/.obj/perlinNoise.o: utils/perlinNoise.cpp utils/perlinNoise.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/perlinNoise.o utils/perlinNoise.cpp

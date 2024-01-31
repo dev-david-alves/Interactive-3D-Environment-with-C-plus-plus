@@ -20,33 +20,27 @@ void Object::draw(vector<vector<vector<int>>> &terrain) {
 }
 
 void Object::drawOrigin(float size) {
-    glPushMatrix();
-        if(this->getCanDrawOrigin()) {
-            // Vetor3D tra = this->getTranslation();
-            // Vetor3D rot = this->getRotation();
-            // Vetor3D scl = this->getScaling();
-
-            // int x = tra.x;
-            // int y = tra.y;
-            // int z = tra.z;
-
-            // glRotatef(rot.x, 1, 0, 0);
-            // glRotatef(rot.y, 0, 1, 0);
-            // glRotatef(rot.z, 0, 0, 1);
-            // glTranslatef(x, y, z);
-            GUI::drawOrigin(size);
-        }
-    glPopMatrix();
+    if(this->getCanDrawOrigin()) {
+        GUI::drawOrigin(size);
+    }
 }
 
 // State
 
-void Object::setSelected(bool select) {
-    this->selected = select;
+void Object::setType(string type) {
+    this->type = type;
 }
 
-bool Object::getSelected() {
-    return this->selected;
+string Object::getType() {
+    return this->type;
+}
+
+void Object::setIsSelected(bool select) {
+    this->isSelected = select;
+}
+
+bool Object::getIsSelected() {
+    return this->isSelected;
 }
 
 void Object::setCanDrawOrigin(bool canDraw) {

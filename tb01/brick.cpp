@@ -9,6 +9,7 @@ using namespace std;
 
 Brick::Brick(Vetor3D initialPos) {
     this->setTranslation(initialPos);
+    this->setType("brick");
 };
 
 Utils utils = Utils();

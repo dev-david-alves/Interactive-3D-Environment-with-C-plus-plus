@@ -12,8 +12,9 @@ class Object {
         Vetor3D rotation = Vetor3D(0, 0, 0);
         Vetor3D scaling = Vetor3D(1, 1, 1);
 
-        bool selected = false;
+        bool isSelected = false;
         bool canDrawOrigin = false;
+        string type = "object";
 
     public:
         Object();
@@ -21,8 +22,11 @@ class Object {
         virtual void draw(vector<vector<vector<int>>> &terrain);
         void drawOrigin(float size = 1.0);
 
-        void setSelected(bool select);
-        bool getSelected();
+        void setType(string type);
+        string getType();
+
+        void setIsSelected(bool select);
+        bool getIsSelected();
 
         void setCanDrawOrigin(bool canDraw);
         bool getCanDrawOrigin();
