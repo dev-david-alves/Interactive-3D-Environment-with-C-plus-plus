@@ -126,9 +126,6 @@ void Spider::draw() {
 
         GUI::setColor(Sr, Sg, Sb);
 
-        // glTranslatef(0, 1, -1);
-        // glRotatef(90, 1, 0, 0);
-
         // Right legs
         glPushMatrix();
             glPushMatrix();

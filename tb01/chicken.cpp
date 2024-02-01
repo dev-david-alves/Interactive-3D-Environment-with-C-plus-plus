@@ -12,99 +12,39 @@ Chicken::Chicken(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialSca
     this->setType("chicken");
 };
 
-void Chicken::drawPart() {
-    glPushMatrix();        
-        // Front
-        glPushMatrix();
-            glTranslatef(-0.2, 0, 1.3);
-            glRotatef(3.9, 1, 0, 0);
-            glBegin(GL_POLYGON);
-                glNormal3f(0, 0, 1);
-                glVertex3f(0.2, 0, 0);
-                glVertex3f(1.3, 0, 0);
-                glVertex3f(1.5, 3, 0);
-                glVertex3f(0, 3, 0);
-            glEnd();
-        glPopMatrix();
-
-        // Back
-        glPushMatrix();
-            glTranslatef(1.3, 0, 0.2);
-            glRotatef(180, 0, 1, 0);
-            glRotatef(3.9, 1, 0, 0);
-            glBegin(GL_POLYGON);
-                glNormal3f(0, 0, 1);
-                glVertex3f(0.2, 0, 0);
-                glVertex3f(1.3, 0, 0);
-                glVertex3f(1.5, 3, 0);
-                glVertex3f(0, 3, 0);
-            glEnd();
-        glPopMatrix();
-
-        // Left
-        glPushMatrix();
-            glTranslatef(1.1, 0, 1.5);
-            glRotatef(90, 0, 1, 0);
-            glRotatef(3.9, 1, 0, 0);
-            glBegin(GL_POLYGON);
-                glNormal3f(0, 0, 1);
-                glVertex3f(0.2, 0, 0);
-                glVertex3f(1.3, 0, 0);
-                glVertex3f(1.5, 3, 0);
-                glVertex3f(0, 3, 0);
-            glEnd();
-        glPopMatrix();
-
-        // Right
-        glPushMatrix();
-            glRotatef(-90, 0, 1, 0);
-            glRotatef(3.9, 1, 0, 0);
-            glBegin(GL_POLYGON);
-                glNormal3f(0, 0, 1);
-                glVertex3f(0.2, 0, 0);
-                glVertex3f(1.3, 0, 0);
-                glVertex3f(1.5, 3, 0);
-                glVertex3f(0, 3, 0);
-            glEnd();
-        glPopMatrix();
-
-        // Bottom
-        glPushMatrix();
-            glTranslatef(0, 0, 0.2);
-            glRotatef(90, 1, 0, 0);
-            glBegin(GL_POLYGON);
-                glNormal3f(0, 0, 1);
-                glVertex3f(0, 0, 0);
-                glVertex3f(1.1, 0, 0);
-                glVertex3f(1.1, 1.1, 0);
-                glVertex3f(0, 1.1, 0);
-            glEnd();
-        glPopMatrix();
-
-        // Top
-        glPushMatrix();
-            glTranslatef(-0.2, 3, 1.5);
-            glRotatef(-90, 1, 0, 0);
-            glBegin(GL_POLYGON);
-                glNormal3f(0, 0, 1);
-                glVertex3f(0, 0, 0);
-                glVertex3f(1.5, 0, 0);
-                glVertex3f(1.5, 1.5, 0);
-                glVertex3f(0, 1.5, 0);
-            glEnd();
-        glPopMatrix();
-    glPopMatrix();
-}
-
 void Chicken::draw() {
-    float Sr = 0.5;
-    float Sg = 0.0;
-    float Sb = 0.0;
+    float Sr = 1.0;
+    float Sg = 1.0;
+    float Sb = 1.0;
+
+    float Ydr = 0.8;
+    float Ydg = 0.8;
+    float Ydb = 0.0;
+
+    float Yr = 1.0;
+    float Yg = 1.0;
+    float Yb = 0.0;
+
+    float Rr = 0.9;
+    float Rg = 0.0;
+    float Rb = 0.0;
 
     if(this->getIsSelected()) {
         Sr = 1.0;
         Sg = 0.0;
         Sb = 0.0;
+
+        Ydr = 1.0;
+        Ydg = 0.0;
+        Ydb = 0.0;
+
+        Yr = 1.0;
+        Yg = 0.0;
+        Yb = 0.0;
+
+        Rr = 1.0;
+        Rg = 0.0;
+        Rb = 0.0;
     }
 
     Vetor3D tra = this->getTranslation();
@@ -124,108 +64,72 @@ void Chicken::draw() {
         
         glScalef(scl.x, scl.y, scl.z);
 
+        // Right leg
+        glPushMatrix();
+            GUI::setColor(Yr, Yg, Yb);
+            glPushMatrix();
+                glTranslatef(0.3, -1, 1.4);
+                glScalef(0.7, 1, 0.7);
+                GUI::drawQuadBox(0, 0, 0, 0.3, 1, 0.3);
+                glTranslatef(0, 0, 0);
+                GUI::drawQuadBox(0, 0, 0, 0.3, 0.3, 0.7);
+            glPopMatrix();
+        glPopMatrix();
+
+        // Left leg
+        glPushMatrix();
+            glPushMatrix();
+                glTranslatef(1.2, -1, 1.4);
+                glScalef(0.7, 1, 0.7);
+                GUI::drawQuadBox(0, 0, 0, 0.3, 1, 0.3);
+                GUI::drawQuadBox(0, 0, 0, 0.3, 0.3, 0.7);
+            glPopMatrix();
+        glPopMatrix();
+
         GUI::setColor(Sr, Sg, Sb);
-
-        // glTranslatef(0, 1, -1);
-        // glRotatef(90, 1, 0, 0);
-
-        // Right legs
+        // Right arm
         glPushMatrix();
             glPushMatrix();
-                glTranslatef(1.7, 1.2, 3.5);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(40, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef(1.7, 1.2, 3.3);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(10, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
-            glPopMatrix();
-            
-            glPushMatrix();
-                glTranslatef(1.7, 1.2, 3.1);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(-10, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef(1.7, 1.2, 2.9);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(-40, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
+                glTranslatef(-0.3, 0.2, 0.2);
+                GUI::drawQuadBox(0, 0, 0, 0.3, 1.2, 2);
             glPopMatrix();
         glPopMatrix();
 
-        // Left legs
+        // left arm
         glPushMatrix();
-            glTranslatef(2.3, 0, 7);
-            glRotatef(180, 0, 1, 0);
             glPushMatrix();
-                glTranslatef(2, 1.2, 3.5);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(40, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef(2, 1.2, 3.3);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(10, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
-            glPopMatrix();
-            
-            glPushMatrix();
-                glTranslatef(2, 1.2, 3.1);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(-10, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef(2, 1.2, 2.9);
-                glRotatef(-130, 0, 0, 1);
-                glRotatef(-40, 1, 0, 0);
-                glScalef(0.3, 0.8, 0.3);
-
-                drawPart();
+                glTranslatef(1.7, 0.2, 0.2);
+                GUI::drawQuadBox(0, 0, 0, 0.3, 1.2, 2);
             glPopMatrix();
         glPopMatrix();
+        
 
         // Upper body
         glPushMatrix();
             glPushMatrix();
                 glTranslatef(0, 0, 0);
-                GUI::drawQuadBox(0, 0, 0, 2, 2, 3);
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef(0.3, 0.3, 3);
-                GUI::drawQuadBox(0, 0, 0, 1.3, 1.3, 1.3);
+                GUI::drawQuadBox(0, 0, 0, 1.7, 1.7, 2.5);
             glPopMatrix();
         glPopMatrix();
 
         // Head
         glPushMatrix();
-            glTranslatef(0.1, 0.2, 4);
-            GUI::drawQuadBox(0, 0, 0, 1.8, 1.8, 1.8);
+            glPushMatrix();
+                glTranslatef(0.25, 1.5, 2.2);
+                GUI::drawQuadBox(0, 0, 0, 1.2, 1.5, 0.8);
+            glPopMatrix();
+
+            GUI::setColor(Ydr, Ydg, Ydb);
+            glPushMatrix();
+                glTranslatef(0.25, 1.9, 3);
+                GUI::drawQuadBox(0, 0, 0, 1.2, 0.5, 0.7);
+            glPopMatrix();
+
+            GUI::setColor(Rr, Rg, Rb);
+            glPushMatrix();
+                glTranslatef(0.6, 1.5, 3);
+                GUI::drawQuadBox(0, 0, 0, 0.5, 0.5, 0.3);
+            glPopMatrix();
         glPopMatrix();
     glPopMatrix();
 }

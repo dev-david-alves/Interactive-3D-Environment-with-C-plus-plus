@@ -408,7 +408,8 @@ run/.obj/main.o: main.cpp gui_glut/gui.h \
 		headers/tree.h \
 		headers/character.h \
 		headers/sheep.h \
-		headers/spider.h
+		headers/spider.h \
+		headers/chicken.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/main.o main.cpp
 
 run/.obj/Camera.o: bib/Camera.cpp bib/Camera.h \

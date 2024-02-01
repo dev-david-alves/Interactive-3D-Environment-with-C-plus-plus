@@ -11,7 +11,6 @@ class Chicken: public Object {
     public:
         Chicken(Vetor3D initialPos = Vetor3D(0, 0, 0), Vetor3D initialRotation = Vetor3D(0, 0, 0), Vetor3D initialScale = Vetor3D(1, 1, 1));
 
-        void drawPart();
         void draw() override;
 };
 

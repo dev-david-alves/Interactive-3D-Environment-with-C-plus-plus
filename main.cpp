@@ -18,12 +18,13 @@ using namespace std;
 #include <headers/character.h>
 #include <headers/sheep.h>
 #include <headers/spider.h>
+#include <headers/chicken.h>
 
 // Declarations
 
-int height = 16; // y
-int width = 16;  // x
-int depth = 16;  // z
+int height = 32; // y
+int width = 32;  // x
+int depth = 32;  // z
 float scaleFactor = 0.6;
 
 float offsetX = width / 2.0;
@@ -40,6 +41,7 @@ vector<Object*> objects;
 Tree* nTree;
 Sheep* nSheep;
 Spider* nSpider;
+Chicken* nChicken;
 Character* nCharacter;
 
 string defultFilePath = "./csv/objects.csv";
@@ -289,6 +291,18 @@ void createSpider(int numT) {
     }
 }
 
+void createChicken(int numT) {
+    for(int i = 0; i < numT; i++) {
+        int x = rand() % width;
+        int z = rand() % depth;
+
+        int y = calculateOffsetY(x, z);
+
+        nChicken = new Chicken(Vetor3D(x, y + 1.6, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nChicken);
+    }
+}
+
 void toggleSelectObj(bool select = true) {
     if (selectedObj != -1) {
         Object* objPtr = objects[selectedObj];
@@ -405,8 +419,35 @@ void keyboard(unsigned char key, int x, int y)
         glutGUI::sclMode = false;
         toggleSelectObj(false);
 
-        nCharacter = new Character(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(1, 1, 1));
+        nCharacter = new Character(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
         objects.push_back(nCharacter);
+        selectedObj = static_cast<int>(objects.size()) - 1;
+
+        break;
+    case '4': 
+        glutGUI::sclMode = false;
+        toggleSelectObj(false);
+
+        nSheep = new Sheep(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nSheep);
+        selectedObj = static_cast<int>(objects.size()) - 1;
+
+        break;
+    case '5': 
+        glutGUI::sclMode = false;
+        toggleSelectObj(false);
+
+        nSpider = new Spider(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nSpider);
+        selectedObj = static_cast<int>(objects.size()) - 1;
+
+        break;
+    case '6': 
+        glutGUI::sclMode = false;
+        toggleSelectObj(false);
+
+        nChicken = new Chicken(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nChicken);
         selectedObj = static_cast<int>(objects.size()) - 1;
 
         break;
@@ -448,10 +489,11 @@ int main()
     }
 
     if(isFileEmpty()) {
-        // createTrees(3);
-        // createSheep(3);
-        // createCharacter(2);
-        createSpider(1);
+        createTrees(3);
+        createSheep(3);
+        createCharacter(3);
+        createSpider(3);
+        createChicken(3);
     } else {
         readCSV();
     }
