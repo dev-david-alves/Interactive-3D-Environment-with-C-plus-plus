@@ -36,7 +36,7 @@ void Sheep::draw() {
     Vetor3D scl = this->getScaling();
 
     glPushMatrix();
-        glTranslatef(tra.x, tra.y + scl.y / 4, tra.z);
+        glTranslatef(tra.x, tra.y, tra.z);
         glRotatef(rot.x, 1, 0, 0);
         glRotatef(rot.y, 0, 1, 0);
         glRotatef(rot.z, 0, 0, 1);
@@ -45,7 +45,7 @@ void Sheep::draw() {
         
         glScalef(scl.x, scl.y, scl.z);
 
-        glTranslatef(0, 1, -1);
+        glTranslatef(-0.3, 1, -1);
         glRotatef(90, 1, 0, 0);
 
         // Left leg

@@ -36,7 +36,9 @@ SOURCES += main.cpp \
     tb01/brick.cpp \
     tb01/tree.cpp \
     tb01/character.cpp \
-    tb01/sheep.cpp
+    tb01/sheep.cpp \
+    tb01/spider.cpp \
+    tb01/chicken.cpp
 
 HEADERS += \
     bib/Camera.h \
@@ -54,4 +56,6 @@ HEADERS += \
     headers/brick.h \
     headers/tree.h \
     headers/character.h \
-    headers/sheep.h
+    headers/sheep.h \
+    headers/spider.h \
+    headers/chicken.h

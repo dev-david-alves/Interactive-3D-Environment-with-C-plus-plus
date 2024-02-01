@@ -68,7 +68,9 @@ SOURCES       = main.cpp \
 		tb01/brick.cpp \
 		tb01/tree.cpp \
 		tb01/character.cpp \
-		tb01/sheep.cpp 
+		tb01/sheep.cpp \
+		tb01/spider.cpp \
+		tb01/chicken.cpp 
 OBJECTS       = run/.obj/main.o \
 		run/.obj/Camera.o \
 		run/.obj/CameraDistante.o \
@@ -85,7 +87,9 @@ OBJECTS       = run/.obj/main.o \
 		run/.obj/brick.o \
 		run/.obj/tree.o \
 		run/.obj/character.o \
-		run/.obj/sheep.o
+		run/.obj/sheep.o \
+		run/.obj/spider.o \
+		run/.obj/chicken.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -171,7 +175,9 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		headers/brick.h \
 		headers/tree.h \
 		headers/character.h \
-		headers/sheep.h main.cpp \
+		headers/sheep.h \
+		headers/spider.h \
+		headers/chicken.h main.cpp \
 		bib/Camera.cpp \
 		bib/CameraDistante.cpp \
 		bib/CameraJogo.cpp \
@@ -187,7 +193,9 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tb01/brick.cpp \
 		tb01/tree.cpp \
 		tb01/character.cpp \
-		tb01/sheep.cpp
+		tb01/sheep.cpp \
+		tb01/spider.cpp \
+		tb01/chicken.cpp
 QMAKE_TARGET  = main
 DESTDIR       = run/
 TARGET        = run/main
@@ -399,7 +407,8 @@ run/.obj/main.o: main.cpp gui_glut/gui.h \
 		headers/brick.h \
 		headers/tree.h \
 		headers/character.h \
-		headers/sheep.h
+		headers/sheep.h \
+		headers/spider.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/main.o main.cpp
 
 run/.obj/Camera.o: bib/Camera.cpp bib/Camera.h \
@@ -521,6 +530,30 @@ run/.obj/sheep.o: tb01/sheep.cpp headers/sheep.h \
 		bib/model3ds.h \
 		headers/object.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/sheep.o tb01/sheep.cpp
+
+run/.obj/spider.o: tb01/spider.cpp headers/spider.h \
+		gui_glut/gui.h \
+		gui_glut/extra.h \
+		bib/CameraDistante.h \
+		bib/Camera.h \
+		bib/Vetor3D.h \
+		bib/CameraJogo.h \
+		bib/Desenha.h \
+		bib/model3ds.h \
+		headers/object.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/spider.o tb01/spider.cpp
+
+run/.obj/chicken.o: tb01/chicken.cpp headers/chicken.h \
+		gui_glut/gui.h \
+		gui_glut/extra.h \
+		bib/CameraDistante.h \
+		bib/Camera.h \
+		bib/Vetor3D.h \
+		bib/CameraJogo.h \
+		bib/Desenha.h \
+		bib/model3ds.h \
+		headers/object.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/chicken.o tb01/chicken.cpp
 
 ####### Install
 

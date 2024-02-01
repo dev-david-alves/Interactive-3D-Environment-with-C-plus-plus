@@ -17,12 +17,13 @@ using namespace std;
 #include <headers/tree.h>
 #include <headers/character.h>
 #include <headers/sheep.h>
+#include <headers/spider.h>
 
 // Declarations
 
-int height = 32; // y
-int width = 32;  // x
-int depth = 32;  // z
+int height = 16; // y
+int width = 16;  // x
+int depth = 16;  // z
 float scaleFactor = 0.6;
 
 float offsetX = width / 2.0;
@@ -37,8 +38,9 @@ Brick* nBrick;
 
 vector<Object*> objects;
 Tree* nTree;
-Character* nCharacter;
 Sheep* nSheep;
+Spider* nSpider;
+Character* nCharacter;
 
 string defultFilePath = "./csv/objects.csv";
 
@@ -270,8 +272,20 @@ void createSheep(int numT) {
 
         int y = calculateOffsetY(x, z);
 
-        nSheep = new Sheep(Vetor3D(x, y + scaleFactor / 2 + 1.4, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        nSheep = new Sheep(Vetor3D(x, y + scaleFactor * 3, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
         objects.push_back(nSheep);
+    }
+}
+
+void createSpider(int numT) {
+    for(int i = 0; i < numT; i++) {
+        int x = rand() % width;
+        int z = rand() % depth;
+
+        int y = calculateOffsetY(x, z);
+
+        nSpider = new Spider(Vetor3D(x, y + scaleFactor * 2, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nSpider);
     }
 }
 
@@ -289,12 +303,12 @@ void draw()
     GUI::displayInit();
 
     GUI::setLight(1, 0, 24, 24, true, false);
-    glDisable(GL_CULL_FACE);
+    // glDisable(GL_CULL_FACE);
     
     // Custom
     // glScalef(scaleFactor, scaleFactor, scaleFactor);
     GUI::drawOrigin(3.0);
-    glTranslatef(-offsetX, 0, -offsetZ);
+    // glTranslatef(-offsetX, 0, -offsetZ);
 
     drawFloor();
 
@@ -434,9 +448,10 @@ int main()
     }
 
     if(isFileEmpty()) {
-        createTrees(3);
-        createSheep(3);
-        createCharacter(2);
+        // createTrees(3);
+        // createSheep(3);
+        // createCharacter(2);
+        createSpider(1);
     } else {
         readCSV();
     }
