@@ -30,11 +30,13 @@ SOURCES += main.cpp \
     gui_glut/extra.cpp \
     gui_glut/gui.cpp \
     gui_glut/OpenTextures.cpp \
+    utils/perlinNoise.cpp \
+    utils/utils.cpp \
     tb01/object.cpp \
     tb01/brick.cpp \
     tb01/tree.cpp \
-    utils/perlinNoise.cpp \
-    utils/utils.cpp
+    tb01/character.cpp \
+    tb01/sheep.cpp
 
 HEADERS += \
     bib/Camera.h \
@@ -46,8 +48,10 @@ HEADERS += \
     gui_glut/extra.h \
     gui_glut/gui.h \
     gui_glut/OpenTextures.h \
+    utils/perlinNoise.h \
+    utils/utils.h \
     headers/object.h \
     headers/brick.h \
     headers/tree.h \
-    utils/perlinNoise.h \
-    utils/utils.h
+    headers/character.h \
+    headers/sheep.h

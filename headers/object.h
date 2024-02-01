@@ -19,7 +19,7 @@ class Object {
     public:
         Object();
 
-        virtual void draw(vector<vector<vector<int>>> &terrain);
+        virtual void draw();
         void drawOrigin(float size = 1.0);
 
         void setType(string type);

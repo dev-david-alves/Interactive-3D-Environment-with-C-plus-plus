@@ -11,9 +11,12 @@ using namespace std;
 
 #include <gui.h>
 #include <headers/object.h>
+#include <utils/perlinNoise.h>
+
 #include <headers/brick.h>
 #include <headers/tree.h>
-#include <utils/perlinNoise.h>
+#include <headers/character.h>
+#include <headers/sheep.h>
 
 // Declarations
 
@@ -21,6 +24,10 @@ int height = 32; // y
 int width = 32;  // x
 int depth = 32;  // z
 float scaleFactor = 0.6;
+
+float offsetX = width / 2.0;
+float offsetZ = depth / 2.0;
+float offsetY = 15.0;
 
 vector<vector<vector<int>>> terrain(height, vector<vector<int>>(width, vector<int>(depth, 0)));
 
@@ -30,12 +37,28 @@ Brick* nBrick;
 
 vector<Object*> objects;
 Tree* nTree;
+Character* nCharacter;
+Sheep* nSheep;
 
 string defultFilePath = "./csv/objects.csv";
 
 // -----------
 
 // Helper functions
+
+void createTerrainByVector() {
+    for (int x = 0; x < width; x++) {
+        for (int k = 0; k < height; k++) {
+            for(int z = 0; z < depth; z++) {
+                if(terrain[k][x][z] == 1) {
+                    Vetor3D initialPos = Vetor3D(x, k, z);
+                    nBrick = new Brick(initialPos, terrain);
+                    brickArr.push_back(nBrick);
+                }
+            }
+        }
+    }
+}
 
 string v3dToString(Vetor3D v3d) {
     return to_string(v3d.x) + "," + to_string(v3d.y) + "," + to_string(v3d.z);
@@ -73,6 +96,8 @@ void createCSV(vector<Object*> v, const string& filename = defultFilePath) {
 }
 
 void readCSV(const string& filename= defultFilePath) {
+    bool isBrick = false;
+
     ifstream file(filename);
 
     if (file.is_open()) {
@@ -107,19 +132,13 @@ void readCSV(const string& filename= defultFilePath) {
             getline(ss, type, ',');
 
             if(type == "brick") {
-                    int x = stoi(Tx);
-                    int y = stoi(Ty);
-                    int z = stoi(Tz);
+                isBrick = true;
+                
+                int x = stoi(Tx);
+                int y = stoi(Ty);
+                int z = stoi(Tz);
 
-                    Vetor3D initialPos = Vetor3D(x, y, z);
-                    terrain[y][x][z] = 1;
-                    nBrick = new Brick(initialPos);
-                    nBrick->setIsSelected(stoi(isSelected));
-                    nBrick->setCanDrawOrigin(stoi(canDrawOrigin));
-
-                    if(nBrick->getIsSelected()) selectedObj = stoi(selectedIndex);
-
-                    brickArr.push_back(nBrick);
+                terrain[y][x][z] = 1;
             } else if(type == "tree") {
                 nTree = new Tree(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
                 nTree->setIsSelected(stoi(isSelected));
@@ -128,6 +147,14 @@ void readCSV(const string& filename= defultFilePath) {
                 if(nTree->getIsSelected()) selectedObj = stoi(selectedIndex);
 
                 objects.push_back(nTree);
+            } else if(type == "character") {
+                nCharacter = new Character(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                nCharacter->setIsSelected(stoi(isSelected));
+                nCharacter->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                if(nCharacter->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                objects.push_back(nCharacter);
             }
         }
 
@@ -135,6 +162,8 @@ void readCSV(const string& filename= defultFilePath) {
     } else {
         cerr << "Error opening CSV file.\n";
     }
+
+    if(isBrick) createTerrainByVector();
 }
 
 bool isFileEmpty(const string& filename= defultFilePath) {
@@ -174,14 +203,13 @@ void createTerrain() {
 
             for(int k = 0; k < height; k++) {
                 if(k < yHeight) {
-                    Vetor3D initialPos = Vetor3D(x, k, z);
                     terrain[k][x][z] = 1;
-                    nBrick = new Brick(initialPos);
-                    brickArr.push_back(nBrick);
                 }
             }
         }
     }
+
+    createTerrainByVector();
 }
 
 void drawFloor() {
@@ -194,7 +222,7 @@ void drawFloor() {
 
         if(terrain[y][x][z] == 1) {
             glPushMatrix(); 
-                b->draw(terrain);
+                b->draw();
             glPopMatrix();
         }
     }
@@ -223,6 +251,30 @@ void createTrees(int numT) {
     }
 }
 
+void createCharacter(int numT) {
+    for(int i = 0; i < numT; i++) {
+        int x = rand() % width;
+        int z = rand() % depth;
+
+        int y = calculateOffsetY(x, z);
+
+        nCharacter = new Character(Vetor3D(x, y + scaleFactor / 2, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nCharacter);
+    }
+}
+
+void createSheep(int numT) {
+    for(int i = 0; i < numT; i++) {
+        int x = rand() % width;
+        int z = rand() % depth;
+
+        int y = calculateOffsetY(x, z);
+
+        nSheep = new Sheep(Vetor3D(x, y + scaleFactor / 2 + 1.4, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        objects.push_back(nSheep);
+    }
+}
+
 void toggleSelectObj(bool select = true) {
     if (selectedObj != -1) {
         Object* objPtr = objects[selectedObj];
@@ -232,10 +284,6 @@ void toggleSelectObj(bool select = true) {
     }
 }
 
-float offsetX = width / 2.0;
-float offsetZ = depth / 2.0;
-float offsetY = 15.0;
-
 void draw()
 {
     GUI::displayInit();
@@ -244,14 +292,14 @@ void draw()
     glDisable(GL_CULL_FACE);
     
     // Custom
-    glScalef(scaleFactor, scaleFactor, scaleFactor);
+    // glScalef(scaleFactor, scaleFactor, scaleFactor);
     GUI::drawOrigin(3.0);
     glTranslatef(-offsetX, 0, -offsetZ);
 
     drawFloor();
 
     for (const auto& objPtr : objects) {
-        objPtr->draw(terrain);
+        objPtr->draw();
     }
 
     toggleSelectObj(true);
@@ -272,17 +320,6 @@ void draw()
     } else {
         glutGUI::trans_obj = false;
     }
-
-    // fruit.draw(terrain);
-    
-    // glPushMatrix();
-    //     glTranslatef(0, 3, 0);
-
-    //     bridge1.draw(terrain);
-    //     bridge2.draw(terrain);
-    // glPopMatrix();
-
-    // Custom
 
     GUI::displayEnd();
 }
@@ -350,6 +387,15 @@ void keyboard(unsigned char key, int x, int y)
         selectedObj = static_cast<int>(objects.size()) - 1;
 
         break;
+    case '3': 
+        glutGUI::sclMode = false;
+        toggleSelectObj(false);
+
+        nCharacter = new Character(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(1, 1, 1));
+        objects.push_back(nCharacter);
+        selectedObj = static_cast<int>(objects.size()) - 1;
+
+        break;
     case '[': 
         if(selectedObj != -1) {
             objects.erase(objects.begin() + selectedObj);
@@ -381,7 +427,6 @@ int main()
 {
     cout << "Running..." << endl;
     
-
     if(isFileEmpty("./csv/floor.csv")) {
         createTerrain();
     } else {
@@ -389,7 +434,9 @@ int main()
     }
 
     if(isFileEmpty()) {
-        createTrees(5);
+        createTrees(3);
+        createSheep(3);
+        createCharacter(2);
     } else {
         readCSV();
     }

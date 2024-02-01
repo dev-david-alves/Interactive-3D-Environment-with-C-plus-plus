@@ -9,9 +9,11 @@ using namespace std;
 
 class Brick: public Object {
     public:
-        Brick(Vetor3D initialPos);
+        vector<vector<vector<int>>> space;
+
+        Brick(Vetor3D initialPos, vector<vector<vector<int>>> &space);
         
-        void draw(vector<vector<vector<int>>> &terrain) override;
+        void draw() override;
 };
 
 #endif

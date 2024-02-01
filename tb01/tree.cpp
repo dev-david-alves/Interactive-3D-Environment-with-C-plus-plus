@@ -40,9 +40,7 @@ Tree::Tree(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialScale) {
 
 Utils utilsT = Utils();
 
-void Tree::draw(vector<vector<vector<int>>> &terrain) {
-    Object::draw(terrain);
-
+void Tree::draw() {
     float r = 0.0;
     float g = 1.0;
     float b = 0.0;

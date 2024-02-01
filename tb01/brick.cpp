@@ -7,16 +7,15 @@
 
 using namespace std;
 
-Brick::Brick(Vetor3D initialPos) {
+Brick::Brick(Vetor3D initialPos, vector<vector<vector<int>>> &space) {
     this->setTranslation(initialPos);
     this->setType("brick");
+    this->space = space;
 };
 
 Utils utils = Utils();
 
-void Brick::draw(vector<vector<vector<int>>> &terrain) {
-    Object::draw(terrain);
-
+void Brick::draw() {
     float colors[6][3] = {
         {0.6, 0.2, 0.2}, // back
         {0.6, 0.2, 0.2}, // front
@@ -30,6 +29,6 @@ void Brick::draw(vector<vector<vector<int>>> &terrain) {
     Vetor3D rot = this->getRotation();
     Vetor3D scl = this->getScaling();
     
-    utils.DrawCube(terrain, tra, rot, scl, colors);
+    utils.DrawCube(this->space, tra, rot, scl, colors);
     this->drawOrigin();
 }

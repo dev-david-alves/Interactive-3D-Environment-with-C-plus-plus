@@ -62,11 +62,13 @@ SOURCES       = main.cpp \
 		gui_glut/extra.cpp \
 		gui_glut/gui.cpp \
 		gui_glut/OpenTextures.cpp \
+		utils/perlinNoise.cpp \
+		utils/utils.cpp \
 		tb01/object.cpp \
 		tb01/brick.cpp \
 		tb01/tree.cpp \
-		utils/perlinNoise.cpp \
-		utils/utils.cpp 
+		tb01/character.cpp \
+		tb01/sheep.cpp 
 OBJECTS       = run/.obj/main.o \
 		run/.obj/Camera.o \
 		run/.obj/CameraDistante.o \
@@ -77,11 +79,13 @@ OBJECTS       = run/.obj/main.o \
 		run/.obj/extra.o \
 		run/.obj/gui.o \
 		run/.obj/OpenTextures.o \
+		run/.obj/perlinNoise.o \
+		run/.obj/utils.o \
 		run/.obj/object.o \
 		run/.obj/brick.o \
 		run/.obj/tree.o \
-		run/.obj/perlinNoise.o \
-		run/.obj/utils.o
+		run/.obj/character.o \
+		run/.obj/sheep.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -161,11 +165,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		gui_glut/extra.h \
 		gui_glut/gui.h \
 		gui_glut/OpenTextures.h \
+		utils/perlinNoise.h \
+		utils/utils.h \
 		headers/object.h \
 		headers/brick.h \
 		headers/tree.h \
-		utils/perlinNoise.h \
-		utils/utils.h main.cpp \
+		headers/character.h \
+		headers/sheep.h main.cpp \
 		bib/Camera.cpp \
 		bib/CameraDistante.cpp \
 		bib/CameraJogo.cpp \
@@ -175,11 +181,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		gui_glut/extra.cpp \
 		gui_glut/gui.cpp \
 		gui_glut/OpenTextures.cpp \
+		utils/perlinNoise.cpp \
+		utils/utils.cpp \
 		tb01/object.cpp \
 		tb01/brick.cpp \
 		tb01/tree.cpp \
-		utils/perlinNoise.cpp \
-		utils/utils.cpp
+		tb01/character.cpp \
+		tb01/sheep.cpp
 QMAKE_TARGET  = main
 DESTDIR       = run/
 TARGET        = run/main
@@ -387,9 +395,11 @@ run/.obj/main.o: main.cpp gui_glut/gui.h \
 		bib/Desenha.h \
 		bib/model3ds.h \
 		headers/object.h \
+		utils/perlinNoise.h \
 		headers/brick.h \
 		headers/tree.h \
-		utils/perlinNoise.h
+		headers/character.h \
+		headers/sheep.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/main.o main.cpp
 
 run/.obj/Camera.o: bib/Camera.cpp bib/Camera.h \
@@ -437,6 +447,20 @@ run/.obj/gui.o: gui_glut/gui.cpp gui_glut/gui.h \
 run/.obj/OpenTextures.o: gui_glut/OpenTextures.cpp gui_glut/OpenTextures.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/OpenTextures.o gui_glut/OpenTextures.cpp
 
+run/.obj/perlinNoise.o: utils/perlinNoise.cpp utils/perlinNoise.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/perlinNoise.o utils/perlinNoise.cpp
+
+run/.obj/utils.o: utils/utils.cpp utils/utils.h \
+		gui_glut/gui.h \
+		gui_glut/extra.h \
+		bib/CameraDistante.h \
+		bib/Camera.h \
+		bib/Vetor3D.h \
+		bib/CameraJogo.h \
+		bib/Desenha.h \
+		bib/model3ds.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/utils.o utils/utils.cpp
+
 run/.obj/object.o: tb01/object.cpp headers/object.h \
 		gui_glut/gui.h \
 		gui_glut/extra.h \
@@ -474,10 +498,7 @@ run/.obj/tree.o: tb01/tree.cpp headers/tree.h \
 		utils/utils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/tree.o tb01/tree.cpp
 
-run/.obj/perlinNoise.o: utils/perlinNoise.cpp utils/perlinNoise.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/perlinNoise.o utils/perlinNoise.cpp
-
-run/.obj/utils.o: utils/utils.cpp utils/utils.h \
+run/.obj/character.o: tb01/character.cpp headers/character.h \
 		gui_glut/gui.h \
 		gui_glut/extra.h \
 		bib/CameraDistante.h \
@@ -485,8 +506,21 @@ run/.obj/utils.o: utils/utils.cpp utils/utils.h \
 		bib/Vetor3D.h \
 		bib/CameraJogo.h \
 		bib/Desenha.h \
-		bib/model3ds.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/utils.o utils/utils.cpp
+		bib/model3ds.h \
+		headers/object.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/character.o tb01/character.cpp
+
+run/.obj/sheep.o: tb01/sheep.cpp headers/sheep.h \
+		gui_glut/gui.h \
+		gui_glut/extra.h \
+		bib/CameraDistante.h \
+		bib/Camera.h \
+		bib/Vetor3D.h \
+		bib/CameraJogo.h \
+		bib/Desenha.h \
+		bib/model3ds.h \
+		headers/object.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o run/.obj/sheep.o tb01/sheep.cpp
 
 ####### Install
 
