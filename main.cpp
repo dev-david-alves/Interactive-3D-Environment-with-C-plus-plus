@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 #include <gui.h>
 #include <headers/object.h>
 #include <utils/perlinNoise.h>
@@ -22,9 +21,12 @@ using namespace std;
 
 // Declarations
 
-int height = 32; // y
-int width = 32;  // x
-int depth = 32;  // z
+int cameraID = 7;
+int numCams = 7;
+
+int height = 24; // y
+int width = 38;  // x
+int depth = 38;  // z
 float scaleFactor = 0.6;
 
 float offsetX = width / 2.0;
@@ -49,6 +51,34 @@ string defultFilePath = "./csv/objects.csv";
 // -----------
 
 // Helper functions
+
+void updateCamera() {
+    cameraID = (cameraID + 1) % numCams;
+
+    switch (cameraID) {
+        case 0:
+            glutGUI::cam = new CameraDistante(-23.0636, 23.6954, 19.373, 0.907788, 2.77401, -0.762525, 0.425455, 0.831428, -0.357374);
+            break;
+        case 1:
+            glutGUI::cam = new CameraDistante(19.7316, 23.4186, 24.4811, 0.907788, 2.77401, -0.762525, -0.327753, 0.836295, -0.439532);
+            break;
+        case 2:
+            glutGUI::cam = new CameraJogo(-24.602, 20.5858, -21.9702, 0.907788, 2.77401, -0.762525, 0.363759, 0.881037, 0.302412);
+            break;
+        case 3:
+            glutGUI::cam = new CameraJogo(29.503, 19.5565, -18.6074, 0.907788, 2.77401, -0.762525, -0.378122, 0.895177, 0.235968);
+            break;
+        case 4:
+            glutGUI::cam = new CameraJogo(8.74211, 13.2678, 19.8554, -0.591092, 3.4424, 0.529852, -0.18103, 0.909241, -0.374845);
+            break;
+        case 5:
+            glutGUI::cam = new CameraJogo(-16.1378, 13.9302, 14.8626, -0.591092, 3.4424, 0.529852, 0.326687, 0.895862, -0.301178);
+            break;
+        default:
+            glutGUI::cam = new CameraJogo(0, 32, 32, 0, 1, 0, 0, 1, 0);
+            break;
+    }
+}
 
 void createTerrainByVector() {
     for (int x = 0; x < width; x++) {
@@ -159,6 +189,30 @@ void readCSV(const string& filename= defultFilePath) {
                 if(nCharacter->getIsSelected()) selectedObj = stoi(selectedIndex);
 
                 objects.push_back(nCharacter);
+            } else if(type == "sheep") {
+                nSheep = new Sheep(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                nSheep->setIsSelected(stoi(isSelected));
+                nSheep->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                if(nSheep->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                objects.push_back(nSheep);
+            } else if(type == "spider") {
+                nSpider = new Spider(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                nSpider->setIsSelected(stoi(isSelected));
+                nSpider->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                if(nSpider->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                objects.push_back(nSpider);
+            } else if(type == "chicken") {
+                nChicken = new Chicken(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                nChicken->setIsSelected(stoi(isSelected));
+                nChicken->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                if(nChicken->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                objects.push_back(nChicken);
             }
         }
 
@@ -320,9 +374,9 @@ void draw()
     // glDisable(GL_CULL_FACE);
     
     // Custom
-    // glScalef(scaleFactor, scaleFactor, scaleFactor);
+    glScalef(scaleFactor, scaleFactor, scaleFactor);
     GUI::drawOrigin(3.0);
-    // glTranslatef(-offsetX, 0, -offsetZ);
+    glTranslatef(-offsetX, 0, -offsetZ);
 
     drawFloor();
 
@@ -356,125 +410,133 @@ void keyboard(unsigned char key, int x, int y)
 {
     GUI::keyInit(key, x, y);
 
-    switch (key)
-    {
-    case 'l':
-        toggleSelectObj(false);
-        selectedObj = -1;
+    switch (key) {
+        case 'l':
+            toggleSelectObj(false);
+            selectedObj = -1;
 
-        if(glutGUI::trans_luz) {
-            glutGUI::trans_luz = false;
-            glutGUI::trans_obj = false;
-        } else {
-            glutGUI::trans_luz = true;
-        }
-
-        glutGUI::sclMode = false;
-
-        break;
-    case '0':
-        toggleSelectObj(false);
-        selectedObj = -1;
-
-        glutGUI::trans_obj = false;
-        glutGUI::trans_luz = false;
-        glutGUI::sclMode = false;
-
-        break;
-    case 'g':
-        toggleSelectObj(false);
-        if(selectedObj > 0) selectedObj--;
-        else selectedObj = static_cast<int>(objects.size()) - 1;
-        glutGUI::sclMode = false;
-
-        break;
-    case 'h':
-        toggleSelectObj(false);
-        selectedObj++;
-        selectedObj = selectedObj % static_cast<int>(objects.size());
-        glutGUI::sclMode = false;
-
-        break;
-    case '-':
-        glutGUI::sclMode = !glutGUI::sclMode;
-
-        break;
-    case '=':
-        if (selectedObj != -1) {
-            Object* objPtr = objects[selectedObj];
-            objPtr->setCanDrawOrigin(!objPtr->getCanDrawOrigin());
-        }
-
-        break;
-    case '2': 
-        glutGUI::sclMode = false;
-        toggleSelectObj(false);
-
-        nTree = new Tree(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
-        objects.push_back(nTree);
-        selectedObj = static_cast<int>(objects.size()) - 1;
-
-        break;
-    case '3': 
-        glutGUI::sclMode = false;
-        toggleSelectObj(false);
-
-        nCharacter = new Character(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
-        objects.push_back(nCharacter);
-        selectedObj = static_cast<int>(objects.size()) - 1;
-
-        break;
-    case '4': 
-        glutGUI::sclMode = false;
-        toggleSelectObj(false);
-
-        nSheep = new Sheep(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
-        objects.push_back(nSheep);
-        selectedObj = static_cast<int>(objects.size()) - 1;
-
-        break;
-    case '5': 
-        glutGUI::sclMode = false;
-        toggleSelectObj(false);
-
-        nSpider = new Spider(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
-        objects.push_back(nSpider);
-        selectedObj = static_cast<int>(objects.size()) - 1;
-
-        break;
-    case '6': 
-        glutGUI::sclMode = false;
-        toggleSelectObj(false);
-
-        nChicken = new Chicken(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
-        objects.push_back(nChicken);
-        selectedObj = static_cast<int>(objects.size()) - 1;
-
-        break;
-    case '[': 
-        if(selectedObj != -1) {
-            objects.erase(objects.begin() + selectedObj);
-            selectedObj--;
-
-            if(selectedObj < 0 && static_cast<int>(objects.size()) > 0) {
-                selectedObj = static_cast<int>(objects.size()) - 1;
+            if(glutGUI::trans_luz) {
+                glutGUI::trans_luz = false;
+                glutGUI::trans_obj = false;
+            } else {
+                glutGUI::trans_luz = true;
             }
-        }
 
-        break;
-    case ']': 
-        if(static_cast<int>(objects.size()) > 0) {
-            objects.pop_back();
-        }
+            glutGUI::sclMode = false;
 
-        break;
-    case 'S': 
-        createCSV(brickArr, "./csv/floor.csv");
-        createCSV(objects);
+            break;
+        case '0':
+            toggleSelectObj(false);
+            selectedObj = -1;
 
-        break;
-    default:
-        break;
+            glutGUI::trans_obj = false;
+            glutGUI::trans_luz = false;
+            glutGUI::sclMode = false;
+
+            break;
+        case '-':
+            toggleSelectObj(false);
+            if(selectedObj > 0) selectedObj--;
+            else selectedObj = static_cast<int>(objects.size()) - 1;
+            glutGUI::sclMode = false;
+
+            break;
+        case '+':
+            toggleSelectObj(false);
+            selectedObj++;
+            selectedObj = selectedObj % static_cast<int>(objects.size());
+            glutGUI::sclMode = false;
+
+            break;
+        case ',':
+            glutGUI::sclMode = !glutGUI::sclMode;
+
+            break;
+        case '.':
+            if (selectedObj != -1) {
+                Object* objPtr = objects[selectedObj];
+                objPtr->setCanDrawOrigin(!objPtr->getCanDrawOrigin());
+            }
+
+            break;
+        case '1': 
+            glutGUI::sclMode = false;
+            toggleSelectObj(false);
+
+            nTree = new Tree(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+            objects.push_back(nTree);
+            selectedObj = static_cast<int>(objects.size()) - 1;
+
+            break;
+        case '2': 
+            glutGUI::sclMode = false;
+            toggleSelectObj(false);
+
+            nCharacter = new Character(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+            objects.push_back(nCharacter);
+            selectedObj = static_cast<int>(objects.size()) - 1;
+
+            break;
+        case '3': 
+            glutGUI::sclMode = false;
+            toggleSelectObj(false);
+
+            nSheep = new Sheep(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+            objects.push_back(nSheep);
+            selectedObj = static_cast<int>(objects.size()) - 1;
+
+            break;
+        case '4': 
+            glutGUI::sclMode = false;
+            toggleSelectObj(false);
+
+            nSpider = new Spider(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+            objects.push_back(nSpider);
+            selectedObj = static_cast<int>(objects.size()) - 1;
+
+            break;
+        case '5': 
+            glutGUI::sclMode = false;
+            toggleSelectObj(false);
+
+            nChicken = new Chicken(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+            objects.push_back(nChicken);
+            selectedObj = static_cast<int>(objects.size()) - 1;
+
+            break;
+        case '6':
+            updateCamera();
+
+            break;
+        case '[': 
+            if(selectedObj != -1) {
+                objects.erase(objects.begin() + selectedObj);
+                selectedObj--;
+
+                if(selectedObj < 0 && static_cast<int>(objects.size()) > 0) {
+                    selectedObj = static_cast<int>(objects.size()) - 1;
+                }
+            }
+
+            break;
+        case ']': 
+            if(static_cast<int>(objects.size()) > 0) {
+                objects.pop_back();
+            }
+
+            break;
+        case 'S': 
+            createCSV(brickArr, "./csv/floor.csv");
+            createCSV(objects);
+
+            break;
+        case ':':
+            cout << "Posicao da camera: " << glutGUI::cam->e.x << ", " << glutGUI::cam->e.y << ", " << glutGUI::cam->e.z << ", " 
+            << glutGUI::cam->c.x << ", " << glutGUI::cam->c.y << ", " << glutGUI::cam->c.z << ", "
+            << glutGUI::cam->u.x << ", " << glutGUI::cam->u.y << ", " << glutGUI::cam->u.z << endl;
+            break;
+        default:
+            break;
     }
 }
 
