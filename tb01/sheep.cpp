@@ -44,7 +44,7 @@ void Sheep::draw() {
 
         this->drawOrigin(3.0);
 
-        glTranslatef(-0.3, 1, -1);
+        glTranslatef(-0.4, 3.2, -1);
         glRotatef(90, 1, 0, 0);
 
         // Left leg
@@ -60,7 +60,7 @@ void Sheep::draw() {
 
             glPushMatrix();
                 GUI::setColor(Sr, Sg, Sb);
-                glTranslatef(0.1, 0.1, 2.5);
+                glTranslatef(0.1, 0, 2.5);
                 glRotatef(180, 0, 0, 1);
                 glRotatef(90, 1, 0, 0);
                 GUI::drawQuadBox(0, 0, 0, 0.5, 0.7, 0.5);
@@ -80,7 +80,7 @@ void Sheep::draw() {
 
             glPushMatrix();
                 GUI::setColor(Sr, Sg, Sb);
-                glTranslatef(0.1, 0.1, 2.5);
+                glTranslatef(0.1, 0, 2.5);
                 glRotatef(180, 0, 0, 1);
                 glRotatef(90, 1, 0, 0);
                 GUI::drawQuadBox(0, 0, 0, 0.5, 0.7, 0.5);
@@ -100,7 +100,7 @@ void Sheep::draw() {
 
             glPushMatrix();
                 GUI::setColor(Sr, Sg, Sb);
-                glTranslatef(0.1, 0.1, 2.5);
+                glTranslatef(0.1, 0, 2.5);
                 glRotatef(180, 0, 0, 1);
                 glRotatef(90, 1, 0, 0);
                 GUI::drawQuadBox(0, 0, 0, 0.5, 0.7, 0.5);
@@ -120,7 +120,7 @@ void Sheep::draw() {
 
             glPushMatrix();
                 GUI::setColor(Sr, Sg, Sb);
-                glTranslatef(0.1, 0.1, 2.5);
+                glTranslatef(0.1, 0, 2.5);
                 glRotatef(180, 0, 0, 1);
                 glRotatef(90, 1, 0, 0);
                 GUI::drawQuadBox(0, 0, 0, 0.5, 0.7, 0.5);

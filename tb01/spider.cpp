@@ -112,16 +112,15 @@ void Spider::draw() {
     Vetor3D scl = this->getScaling();
 
     glPushMatrix();
-        glTranslatef(tra.x - 0.5, tra.y - 0.5, tra.z - 1);
+        glTranslatef(tra.x, tra.y, tra.z);
         glRotatef(rot.x, 1, 0, 0);
         glRotatef(rot.y, 0, 1, 0);
         glRotatef(rot.z, 0, 0, 1);
         glScalef(scl.x, scl.y, scl.z);
 
-        glPushMatrix();
-            glTranslatef(0.5, 0.5, 1);
-            this->drawOrigin(3.0);
-        glPopMatrix();
+        this->drawOrigin(3.0);
+        
+        glTranslatef(-1, 0, -2);
 
         GUI::setColor(Sr, Sg, Sb);
 

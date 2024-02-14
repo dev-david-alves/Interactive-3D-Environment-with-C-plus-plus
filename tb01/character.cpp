@@ -44,7 +44,7 @@ void Character::draw() {
     Vetor3D scl = this->getScaling();
 
     glPushMatrix();
-        glTranslatef(tra.x, tra.y + scl.y / 4, tra.z);
+        glTranslatef(tra.x, tra.y, tra.z);
         glRotatef(rot.x, 1, 0, 0);
         glRotatef(rot.y, 0, 1, 0);
         glRotatef(rot.z, 0, 0, 1);
@@ -52,7 +52,7 @@ void Character::draw() {
         
         this->drawOrigin(3.0);
 
-        glTranslatef(0, 2, -0.5);
+        glTranslatef(0, 1.8, -0.5);
 
         // Left leg
         glPushMatrix();

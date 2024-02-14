@@ -313,10 +313,10 @@ void createCharacter(int numT) {
     for(int i = 0; i < numT; i++) {
         int x = rand() % width;
         int z = rand() % depth;
-
+        
         int y = calculateOffsetY(x, z);
 
-        nCharacter = new Character(Vetor3D(x, y + scaleFactor / 2, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        nCharacter = new Character(Vetor3D(x, y + scaleFactor, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
         objects.push_back(nCharacter);
     }
 }
@@ -328,7 +328,7 @@ void createSheep(int numT) {
 
         int y = calculateOffsetY(x, z);
 
-        nSheep = new Sheep(Vetor3D(x, y + scaleFactor * 3, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        nSheep = new Sheep(Vetor3D(x, y + 0.5, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
         objects.push_back(nSheep);
     }
 }
@@ -340,7 +340,7 @@ void createSpider(int numT) {
 
         int y = calculateOffsetY(x, z);
 
-        nSpider = new Spider(Vetor3D(x, y + scaleFactor * 2, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        nSpider = new Spider(Vetor3D(x, y + scaleFactor, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
         objects.push_back(nSpider);
     }
 }
@@ -352,7 +352,7 @@ void createChicken(int numT) {
 
         int y = calculateOffsetY(x, z);
 
-        nChicken = new Chicken(Vetor3D(x, y + 1.6, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+        nChicken = new Chicken(Vetor3D(x, y + scaleFactor, z), Vetor3D(0, 0, 0), Vetor3D(scaleFactor  / 2, scaleFactor  / 2, scaleFactor  / 2));
         objects.push_back(nChicken);
     }
 }
@@ -377,7 +377,7 @@ void draw()
     glScalef(scaleFactor, scaleFactor, scaleFactor);
     GUI::drawOrigin(3.0);
     glTranslatef(-offsetX, 0, -offsetZ);
-
+    
     drawFloor();
 
     for (const auto& objPtr : objects) {
@@ -499,7 +499,7 @@ void keyboard(unsigned char key, int x, int y)
             glutGUI::sclMode = false;
             toggleSelectObj(false);
 
-            nChicken = new Chicken(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor, scaleFactor, scaleFactor));
+            nChicken = new Chicken(Vetor3D(offsetX, offsetY, offsetZ), Vetor3D(0, 0, 0), Vetor3D(scaleFactor / 2, scaleFactor / 2, scaleFactor / 2));
             objects.push_back(nChicken);
             selectedObj = static_cast<int>(objects.size()) - 1;
 
@@ -553,8 +553,8 @@ int main()
 
     if(isFileEmpty()) {
         createTrees(3);
-        createSheep(3);
         createCharacter(3);
+        createSheep(3);
         createSpider(3);
         createChicken(3);
     } else {
