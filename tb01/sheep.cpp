@@ -40,10 +40,9 @@ void Sheep::draw() {
         glRotatef(rot.x, 1, 0, 0);
         glRotatef(rot.y, 0, 1, 0);
         glRotatef(rot.z, 0, 0, 1);
+        glScalef(scl.x, scl.y, scl.z);
 
         this->drawOrigin(3.0);
-        
-        glScalef(scl.x, scl.y, scl.z);
 
         glTranslatef(-0.3, 1, -1);
         glRotatef(90, 1, 0, 0);

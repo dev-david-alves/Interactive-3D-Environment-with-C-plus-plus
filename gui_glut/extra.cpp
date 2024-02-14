@@ -207,7 +207,7 @@ void glutGUI::defaultKey(unsigned char key, int x, int y)
     //case 'l':
     //    enabled_light[7] = !enabled_light[7];
     //    break;
-    case '0'...'7':
+    case ';':
         enabled_light[key-'0'] = !enabled_light[key-'0'];
         break;
 
