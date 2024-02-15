@@ -16,18 +16,8 @@ void Utils::DrawQuadPolygon(float r, float g, float b, float a) {
     glPopMatrix();
 }
 
-void Utils::DrawCube(Vetor3D tra, Vetor3D rot, Vetor3D scl, float colors[6][3]) {
-    int x = tra.x;
-    int y = tra.y;
-    int z = tra.z;
-
+void Utils::DrawCube(float colors[6][3]) {
     glPushMatrix();
-        glTranslatef(x - scl.x / 2, y - scl.y / 2, z + scl.z / 2);
-        glRotatef(rot.x, 1, 0, 0);
-        glRotatef(rot.y, 0, 1, 0);
-        glRotatef(rot.z, 0, 0, 1);
-        glScalef(scl.x, scl.y, scl.z);
-
         // Front face
         glPushMatrix();
             this->DrawQuadPolygon(colors[1][0], colors[1][1], colors[1][2], 1.0);

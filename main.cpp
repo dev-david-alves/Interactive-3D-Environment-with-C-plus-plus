@@ -36,7 +36,7 @@ float offsetY = 15.0;
 vector<vector<vector<int>>> terrain(height, vector<vector<int>>(width, vector<int>(depth, 0)));
 
 int selectedObj = -1;
-vector<Object*> brickArr;
+vector<Brick*> brickArr;
 Brick* nBrick;
 
 vector<Object*> objects;
@@ -86,7 +86,7 @@ void createTerrainByVector() {
             for(int z = 0; z < depth; z++) {
                 if(terrain[k][x][z] == 1) {
                     Vetor3D initialPos = Vetor3D(x, k, z);
-                    nBrick = new Brick(initialPos, terrain);
+                    nBrick = new Brick(initialPos);
                     brickArr.push_back(nBrick);
                 }
             }
@@ -129,90 +129,126 @@ void createCSV(vector<Object*> v, const string& filename = defultFilePath) {
     }
 }
 
-void readCSV(const string& filename= defultFilePath) {
-    bool isBrick = false;
+void createTerrainCSV(vector<Brick*> b, const string& filename = "./csv/terrain.csv") {
+    ofstream file(filename);
 
+    if (file.is_open()) {
+        for(auto el: b) {
+            Vetor3D tra = el->getTranslation();
+            string phrase = v3dToString(tra) + "\n";
+            file << phrase;
+        }
+
+        file.close();
+
+        cout << "CSV file created successfully.\n";
+    } else {
+        cerr << "Error creating CSV file.\n";
+    }
+
+}
+
+void readCSV(const string& filename = defultFilePath, bool isTerrain = false) {
     ifstream file(filename);
 
     if (file.is_open()) {
         string line;
 
-        // Read and display data
-        while (getline(file, line)) {
-            stringstream ss(line);
-            string Tx, Ty, Tz, Rx, Ry, Rz, Sx, Sy, Sz, isSelected, selectedIndex, canDrawOrigin, type;
+        if(isTerrain) {
+            while (getline(file, line)) {
+                stringstream ss(line);
+                string Tx, Ty, Tz;
 
-            // Translation
-            getline(ss, Tx, ',');
-            getline(ss, Ty, ',');
-            getline(ss, Tz, ',');
-            
-            // Rotation
-            getline(ss, Rx, ',');
-            getline(ss, Ry, ',');
-            getline(ss, Rz, ',');
+                // Translation
+                getline(ss, Tx, ',');
+                getline(ss, Ty, ',');
+                getline(ss, Tz, ',');
 
-            // Scaling
-            getline(ss, Sx, ',');
-            getline(ss, Sy, ',');
-            getline(ss, Sz, ',');
-
-            // State
-            getline(ss, isSelected, ',');
-            getline(ss, selectedIndex, ',');
-            getline(ss, canDrawOrigin, ',');
-
-            // Type
-            getline(ss, type, ',');
-
-            if(type == "brick") {
-                isBrick = true;
-                
                 int x = stoi(Tx);
                 int y = stoi(Ty);
                 int z = stoi(Tz);
 
                 terrain[y][x][z] = 1;
-            } else if(type == "tree") {
-                nTree = new Tree(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
-                nTree->setIsSelected(stoi(isSelected));
-                nTree->setCanDrawOrigin(stoi(canDrawOrigin));
+            }
 
-                if(nTree->getIsSelected()) selectedObj = stoi(selectedIndex);
+            createTerrainByVector();
+        } else {
+            while (getline(file, line)) {
+                stringstream ss(line);
+                string Tx, Ty, Tz, Rx, Ry, Rz, Sx, Sy, Sz, isSelected, selectedIndex, canDrawOrigin, type;
 
-                objects.push_back(nTree);
-            } else if(type == "character") {
-                nCharacter = new Character(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
-                nCharacter->setIsSelected(stoi(isSelected));
-                nCharacter->setCanDrawOrigin(stoi(canDrawOrigin));
+                // Translation
+                getline(ss, Tx, ',');
+                getline(ss, Ty, ',');
+                getline(ss, Tz, ',');
+                
+                // Rotation
+                getline(ss, Rx, ',');
+                getline(ss, Ry, ',');
+                getline(ss, Rz, ',');
 
-                if(nCharacter->getIsSelected()) selectedObj = stoi(selectedIndex);
+                // Scaling
+                getline(ss, Sx, ',');
+                getline(ss, Sy, ',');
+                getline(ss, Sz, ',');
 
-                objects.push_back(nCharacter);
-            } else if(type == "sheep") {
-                nSheep = new Sheep(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
-                nSheep->setIsSelected(stoi(isSelected));
-                nSheep->setCanDrawOrigin(stoi(canDrawOrigin));
+                // State
+                getline(ss, isSelected, ',');
+                getline(ss, selectedIndex, ',');
+                getline(ss, canDrawOrigin, ',');
 
-                if(nSheep->getIsSelected()) selectedObj = stoi(selectedIndex);
+                // Type
+                getline(ss, type, ',');
 
-                objects.push_back(nSheep);
-            } else if(type == "spider") {
-                nSpider = new Spider(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
-                nSpider->setIsSelected(stoi(isSelected));
-                nSpider->setCanDrawOrigin(stoi(canDrawOrigin));
+                if(type == "brick") {
+                    nBrick = new Brick(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                    nBrick->setIsSelected(stoi(isSelected));
+                    nBrick->setCanDrawOrigin(stoi(canDrawOrigin));
 
-                if(nSpider->getIsSelected()) selectedObj = stoi(selectedIndex);
+                    if(nBrick->getIsSelected()) selectedObj = stoi(selectedIndex);
 
-                objects.push_back(nSpider);
-            } else if(type == "chicken") {
-                nChicken = new Chicken(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
-                nChicken->setIsSelected(stoi(isSelected));
-                nChicken->setCanDrawOrigin(stoi(canDrawOrigin));
+                    objects.push_back(nBrick);
+                } else if(type == "tree") {
+                    nTree = new Tree(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                    nTree->setIsSelected(stoi(isSelected));
+                    nTree->setCanDrawOrigin(stoi(canDrawOrigin));
 
-                if(nChicken->getIsSelected()) selectedObj = stoi(selectedIndex);
+                    if(nTree->getIsSelected()) selectedObj = stoi(selectedIndex);
 
-                objects.push_back(nChicken);
+                    objects.push_back(nTree);
+                } else if(type == "character") {
+                    nCharacter = new Character(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                    nCharacter->setIsSelected(stoi(isSelected));
+                    nCharacter->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                    if(nCharacter->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                    objects.push_back(nCharacter);
+                } else if(type == "sheep") {
+                    nSheep = new Sheep(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                    nSheep->setIsSelected(stoi(isSelected));
+                    nSheep->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                    if(nSheep->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                    objects.push_back(nSheep);
+                } else if(type == "spider") {
+                    nSpider = new Spider(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                    nSpider->setIsSelected(stoi(isSelected));
+                    nSpider->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                    if(nSpider->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                    objects.push_back(nSpider);
+                } else if(type == "chicken") {
+                    nChicken = new Chicken(stringToV3d(Tx, Ty, Tz), stringToV3d(Rx, Ry, Rz), stringToV3d(Sx, Sy, Sz));
+                    nChicken->setIsSelected(stoi(isSelected));
+                    nChicken->setCanDrawOrigin(stoi(canDrawOrigin));
+
+                    if(nChicken->getIsSelected()) selectedObj = stoi(selectedIndex);
+
+                    objects.push_back(nChicken);
+                }
             }
         }
 
@@ -220,8 +256,6 @@ void readCSV(const string& filename= defultFilePath) {
     } else {
         cerr << "Error opening CSV file.\n";
     }
-
-    if(isBrick) createTerrainByVector();
 }
 
 bool isFileEmpty(const string& filename= defultFilePath) {
@@ -280,7 +314,7 @@ void drawFloor() {
 
         if(terrain[y][x][z] == 1) {
             glPushMatrix(); 
-                b->draw();
+                b->draw(terrain);
             glPopMatrix();
         }
     }
@@ -504,7 +538,16 @@ void keyboard(unsigned char key, int x, int y)
             selectedObj = static_cast<int>(objects.size()) - 1;
 
             break;
-        case '6':
+        case '6': 
+            glutGUI::sclMode = false;
+            toggleSelectObj(false);
+
+            nBrick = new Brick(Vetor3D(offsetX, offsetY, offsetZ));
+            objects.push_back(nBrick);
+            selectedObj = static_cast<int>(objects.size()) - 1;
+
+            break;
+        case '7':
             updateCamera();
 
             break;
@@ -526,7 +569,7 @@ void keyboard(unsigned char key, int x, int y)
 
             break;
         case 'S': 
-            createCSV(brickArr, "./csv/floor.csv");
+            createTerrainCSV(brickArr);
             createCSV(objects);
 
             break;
@@ -545,12 +588,14 @@ int main()
 {
     cout << "Running..." << endl;
     
-    if(isFileEmpty("./csv/floor.csv")) {
+    // Terrain
+    if(isFileEmpty("./csv/terrain.csv")) {
         createTerrain();
     } else {
-        readCSV("./csv/floor.csv");
+        readCSV("./csv/terrain.csv", true);
     }
 
+    // Objects
     if(isFileEmpty()) {
         createTrees(3);
         createCharacter(3);
