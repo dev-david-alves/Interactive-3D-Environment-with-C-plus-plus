@@ -21,7 +21,7 @@ using namespace std;
 
 // Declarations
 
-int cameraID = 7;
+int cameraID = 5;
 int numCams = 7;
 
 int height = 24; // y
@@ -57,25 +57,25 @@ void updateCamera() {
 
     switch (cameraID) {
         case 0:
-            glutGUI::cam = new CameraDistante(-23.0636, 23.6954, 19.373, 0.907788, 2.77401, -0.762525, 0.425455, 0.831428, -0.357374);
+            glutGUI::cam = new CameraDistante(36.1593, 52.0569, 33.8342, -0.374595, 3.00397, 0.195141, -0.516964, 0.711456, -0.476002);
             break;
         case 1:
-            glutGUI::cam = new CameraDistante(19.7316, 23.4186, 24.4811, 0.907788, 2.77401, -0.762525, -0.327753, 0.836295, -0.439532);
+            glutGUI::cam = new CameraDistante(35.1502, 50.7328, -36.3078, -0.374595, 3.00397, 0.195141, -0.476882, 0.729706, 0.490012);
             break;
         case 2:
-            glutGUI::cam = new CameraJogo(-24.602, 20.5858, -21.9702, 0.907788, 2.77401, -0.762525, 0.363759, 0.881037, 0.302412);
+            glutGUI::cam = new CameraJogo(-25.7932, 51.7887, -42.7752, -0.374595, 3.00397, 0.195141, 0.355825, 0.715231, 0.601526);
             break;
         case 3:
-            glutGUI::cam = new CameraJogo(29.503, 19.5565, -18.6074, 0.907788, 2.77401, -0.762525, -0.378122, 0.895177, 0.235968);
+            glutGUI::cam = new CameraJogo(-33.2456, 54.5045, 34.0059, -1.75942, 3.00397, -1.04871, 0.493013, 0.675026, -0.548888);
             break;
         case 4:
-            glutGUI::cam = new CameraJogo(8.74211, 13.2678, 19.8554, -0.591092, 3.4424, 0.529852, -0.18103, 0.909241, -0.374845);
+            glutGUI::cam = new CameraJogo(-45.1375, 45.7314, -2.4365, -1.75942, 3.00397, -1.04871, 0.701202, 0.712609, 0.0224334);
             break;
         case 5:
-            glutGUI::cam = new CameraJogo(-16.1378, 13.9302, 14.8626, -0.591092, 3.4424, 0.529852, 0.326687, 0.895862, -0.301178);
+            glutGUI::cam = new CameraJogo(-1.45606, 41.2756, -48.4239, -1.75942, 3.00397, -1.04871, -0.00402372, 0.777891, 0.628386);
             break;
         default:
-            glutGUI::cam = new CameraJogo(0, 32, 32, 0, 1, 0, 0, 1, 0);
+            glutGUI::cam = new CameraJogo(-0.354489, 52.8415, 49.0697, -0.374595, 3.00397, 0.195141, -0.00029371, 0.700175, -0.713971);
             break;
     }
 }
@@ -400,23 +400,31 @@ void toggleSelectObj(bool select = true) {
     }
 }
 
-void draw()
-{
+void drawScenario() {
+    int indexName = 1;
+    for (const auto& objPtr : objects) {
+        glPushName(indexName);
+            glTranslatef(-offsetX, 0, -offsetZ);
+            objPtr->draw();
+            glTranslatef(offsetX, 0, offsetZ);
+            indexName++;
+        glPopName();
+    }
+}
+
+void draw(){
     GUI::displayInit();
 
     GUI::setLight(1, 0, 24, 24, true, false);
-    // glDisable(GL_CULL_FACE);
     
     // Custom
-    glScalef(scaleFactor, scaleFactor, scaleFactor);
     GUI::drawOrigin(3.0);
-    glTranslatef(-offsetX, 0, -offsetZ);
     
+    glTranslatef(-offsetX, 0, -offsetZ);
     drawFloor();
+    glTranslatef(offsetX, 0, offsetZ);
 
-    for (const auto& objPtr : objects) {
-        objPtr->draw();
-    }
+    drawScenario();
 
     toggleSelectObj(true);
 
@@ -439,6 +447,43 @@ void draw()
 
     GUI::displayEnd();
 }
+
+//-------------------picking start ------------------
+
+int picking(GLint cursorX, GLint cursorY, int w, int h) {
+    int BUFSIZE = 512;
+    GLuint selectBuf[512];
+
+    GUI::pickingInit(cursorX, cursorY, w, h, selectBuf, BUFSIZE);
+
+    GUI::displayInit();
+    drawScenario();
+    GUI::displayEnd();
+
+    return GUI::pickingClosestName(selectBuf, BUFSIZE);
+}
+
+void mouse(int button, int state, int x, int y) {
+    GUI::mouseButtonInit(button,state,x,y);
+
+    // if the left button is pressed
+    if (button == GLUT_LEFT_BUTTON) {
+        cout << "Mouse: " << x << ", " << y << endl;
+        // when the button is pressed
+        if (state == GLUT_DOWN) {
+            //picking
+            int pick = picking(x, y, 5, 5);
+            if (pick != 0 && pick != selectedObj + 1) {
+                toggleSelectObj(false);
+                selectedObj = pick - 1;
+                toggleSelectObj(true);
+                glutGUI::lbpressed = false;
+            }
+        }
+    }
+}
+
+//-------------------picking end --------------------
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -606,6 +651,6 @@ int main()
         readCSV();
     }
 
-    GUI gui = GUI(800, 600, draw, keyboard);
-
+    updateCamera();
+    GUI gui = GUI(800, 600, draw, keyboard, mouse);
 }
