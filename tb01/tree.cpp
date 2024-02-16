@@ -82,6 +82,18 @@ void Tree::draw() {
             }
 
             glPushMatrix();
+                glBegin(GL_POLYGON);
+                    for (int i = 0; i < 360; i += 5) {
+                        glNormal3f(0, 0, 1);
+                        float theta = 2.0f * 3.1415926f * float(i) / float(360);
+                        float x = 2 * cosf(theta);
+                        float z = 2 * sinf(theta); 
+                        glVertex3f(x, 0, z);
+                    }
+                glEnd();
+            glPopMatrix();
+
+            glPushMatrix();
                 glRotatef(180, 0, 0, 1);
                 glBegin(GL_QUAD_STRIP);
                     for(int j = 0; j <= 360; j+= 5) {
