@@ -17,6 +17,14 @@ class Object {
         string type = "object";
 
     public:
+        // Only for the player --------------
+        string playerName = "No Player";
+        float playerYVel = 0;
+        float gravity = 0.1;
+        float jumpForce = 1.5;
+        bool isMoving = false;
+        // End of only for the player -------
+        
         Object();
 
         virtual void draw();

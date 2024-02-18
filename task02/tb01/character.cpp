@@ -12,6 +12,8 @@ Character::Character(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initia
     this->setType("character");
 };
 
+
+
 void Character::draw() {
     float Sr = 1.0;
     float Sg = 0.75;
@@ -39,6 +41,16 @@ void Character::draw() {
         Lb = 0.0;
     }
 
+    if(abs(this->memberAngle) >= this->maxMemberAngle) {
+        this->subTrator = -this->subTrator;
+    } 
+
+    this->memberAngle += this->subTrator;
+
+    if(!this->isMoving) {
+        this->memberAngle = 0;
+    } 
+    
     Vetor3D tra = this->getTranslation();
     Vetor3D rot = this->getRotation();
     Vetor3D scl = this->getScaling();
@@ -59,7 +71,7 @@ void Character::draw() {
             GUI::setColor(Lr, Lg, Lb);
             glTranslatef(0, 0, 0.25);
             glRotatef(180, 0, 0, 1);
-            glRotatef(-25, 1, 0, 0);
+            glRotatef(this->memberAngle, 1, 0, 0);
             GUI::drawQuadBox(0, 0, 0, 0.5, 2, 0.5);
         glPopMatrix();
 
@@ -68,7 +80,7 @@ void Character::draw() {
             GUI::setColor(Lr, Lg, Lb);
             glTranslatef(0.5, 0, 0.25);
             glRotatef(180, 0, 0, 1);
-            glRotatef(25, 1, 0, 0);
+            glRotatef(-this->memberAngle, 1, 0, 0);
             GUI::drawQuadBox(0, 0, 0, 0.5, 2, 0.5);
         glPopMatrix();
        
@@ -77,7 +89,7 @@ void Character::draw() {
             GUI::setColor(Sr, Sg, Sb);
             glTranslatef(-0.5, 1.5, 0.25);
             glRotatef(180, 0, 0, 1);
-            glRotatef(45, 1, 0, 0);
+            glRotatef(-this->memberAngle, 1, 0, 0);
             GUI::drawQuadBox(0, 0, 0, 0.5, 2, 0.5);
         glPopMatrix();
 
@@ -86,7 +98,7 @@ void Character::draw() {
             GUI::setColor(Sr, Sg, Sb);
             glTranslatef(1, 1.5, 0.25);
             glRotatef(180, 0, 0, 1);
-            glRotatef(60, 1, 0, 0);
+            glRotatef(this->memberAngle, 1, 0, 0);
             GUI::drawQuadBox(0, 0, 0, 0.5, 2, 0.5);
         glPopMatrix();
 

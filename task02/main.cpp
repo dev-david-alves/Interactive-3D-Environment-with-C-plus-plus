@@ -401,30 +401,81 @@ void toggleSelectObj(bool select = true) {
 }
 
 void drawScenario() {
+    glTranslatef(-offsetX, 0, -offsetZ);
+
+    // Draw floor
+    drawFloor();
+
+    // Draw objects
     int indexName = 1;
+
     for (const auto& objPtr : objects) {
         glPushName(indexName);
-            glTranslatef(-offsetX, 0, -offsetZ);
             objPtr->draw();
-            glTranslatef(offsetX, 0, offsetZ);
             indexName++;
         glPopName();
+    }
+
+    glTranslatef(offsetX, 0, offsetZ);
+}
+
+void drawViewports() {
+    float width = glutGUI::width;
+    float height = glutGUI::height;
+
+    glMatrixMode(GL_MODELVIEW);
+
+    glViewport(0, 0, width, height);
+    glLoadIdentity();
+    gluLookAt(glutGUI::cam->e.x,glutGUI::cam->e.y,glutGUI::cam->e.z, glutGUI::cam->c.x,glutGUI::cam->c.y,glutGUI::cam->c.z, glutGUI::cam->u.x,glutGUI::cam->u.y,glutGUI::cam->u.z);
+    drawScenario();
+
+    if(selectedObj != -1) {
+        Object* objPtr = objects[selectedObj];
+        if(objPtr->getType() == "character" && objPtr->playerName == "Player") {
+            Vetor3D tra = objPtr->getTranslation();
+            Vetor3D rot = objPtr->getRotation();
+            
+            objPtr->playerYVel -= objPtr->gravity;
+            if(tra.y + objPtr->playerYVel < calculateOffsetY(tra.x, tra.z) + 1) {
+                objPtr->playerYVel = 0;
+                objPtr->setTranslation(Vetor3D(tra.x, calculateOffsetY(tra.x, tra.z) + 0.6, tra.z));
+            } else {
+                objPtr->setTranslation(Vetor3D(tra.x, tra.y + objPtr->playerYVel, tra.z));
+            }
+
+            float x = tra.x + sin(rot.y * M_PI / 180) - offsetX;
+            float z = tra.z + cos(rot.y * M_PI / 180) - offsetZ;
+
+            // Put light on that viewport
+            GUI::glScissoredViewport(0, 2 * height / 4, width / 2, height / 2);
+            glLoadIdentity();
+            gluLookAt(tra.x - offsetX, tra.y + 3, tra.z - offsetZ, x, tra.y + 2.7, z, 0, 1, 0);
+            drawScenario();
+        }
+    }
+}
+
+void keyboardUp(unsigned char key, int x, int y) {
+    // GUI::keyUpInit(key, x, y);
+
+    if (selectedObj != -1) {
+        Object* objPtr = objects[selectedObj];
+        if(objPtr->getType() == "character" && objPtr->playerName == "Player") {
+            if(key == 'w') {
+                objPtr->isMoving = false;
+            }
+        }
     }
 }
 
 void draw(){
     GUI::displayInit();
-
-    GUI::setLight(1, 0, 24, 24, true, false);
-    
-    // Custom
+    glutKeyboardUpFunc(keyboardUp);
+    GUI::setLight(1, 0, 24, 10, true, false);
     GUI::drawOrigin(3.0);
-    
-    glTranslatef(-offsetX, 0, -offsetZ);
-    drawFloor();
-    glTranslatef(offsetX, 0, offsetZ);
 
-    drawScenario();
+    drawViewports();
 
     toggleSelectObj(true);
 
@@ -468,7 +519,6 @@ void mouse(int button, int state, int x, int y) {
 
     // if the left button is pressed
     if (button == GLUT_LEFT_BUTTON) {
-        cout << "Mouse: " << x << ", " << y << endl;
         // when the button is pressed
         if (state == GLUT_DOWN) {
             //picking
@@ -619,15 +669,48 @@ void keyboard(unsigned char key, int x, int y)
 
             break;
         case ':':
-            cout << "Posicao da camera: " << glutGUI::cam->e.x << ", " << glutGUI::cam->e.y << ", " << glutGUI::cam->e.z << ", " 
+            cout << "Camera pos: " << glutGUI::cam->e.x << ", " << glutGUI::cam->e.y << ", " << glutGUI::cam->e.z << ", " 
             << glutGUI::cam->c.x << ", " << glutGUI::cam->c.y << ", " << glutGUI::cam->c.z << ", "
             << glutGUI::cam->u.x << ", " << glutGUI::cam->u.y << ", " << glutGUI::cam->u.z << endl;
             
+            break;
+        case 'a':
+            if(selectedObj != -1) {
+                Object* objPtr = objects[selectedObj];
+                if(objPtr->getType() == "character" && objPtr->playerName == "Player") {
+                    objPtr->setRotation(Vetor3D(0, objPtr->getRotation().y - 8, 0));
+                }
+            }
+            break;
+        case 'd':
+            if(selectedObj != -1) {
+                Object* objPtr = objects[selectedObj];
+                if(objPtr->getType() == "character" && objPtr->playerName == "Player") {
+                    objPtr->setRotation(Vetor3D(0, objPtr->getRotation().y + 8, 0));
+                }
+            }
+            break;
+        case 'w':
+            if(selectedObj != -1) {
+                Object* objPtr = objects[selectedObj];
+                if(objPtr->getType() == "character" && objPtr->playerName == "Player") {
+                    float x = sin(objPtr->getRotation().y * M_PI / 180);
+                    float z = cos(objPtr->getRotation().y * M_PI / 180);
+                    float newX = objPtr->getTranslation().x + x / 3;
+                    float newZ = objPtr->getTranslation().z + z / 3;
+
+                    if(newX >= 0 && newX < width && newZ >= 0 && newZ < depth) {
+                        objPtr->isMoving = true;
+                        objPtr->setTranslation(Vetor3D(newX, objPtr->getTranslation().y, newZ));
+                    }
+                }
+            }
             break;
         default:
             break;
     }
 }
+
 
 int main()
 {
@@ -642,15 +725,17 @@ int main()
 
     // Objects
     if(isFileEmpty()) {
+        createCharacter(2);
         createTrees(3);
-        createCharacter(3);
-        createSheep(3);
-        createSpider(3);
-        createChicken(3);
+        // createSheep(3);
+        // createSpider(3);
+        // createChicken(3);
     } else {
         readCSV();
     }
 
-    updateCamera();
+    objects[0]->playerName = "Player";
+    objects[0]->setRotation(Vetor3D(0, 180, 0));
+    
     GUI gui = GUI(800, 600, draw, keyboard, mouse);
 }
