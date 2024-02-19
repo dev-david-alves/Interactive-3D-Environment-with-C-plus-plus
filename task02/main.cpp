@@ -23,6 +23,8 @@ using namespace std;
 
 int cameraID = 5;
 int numCams = 7;
+int viewportID = 0;
+int numViewports = 3;
 
 int height = 24; // y
 int width = 38;  // x
@@ -401,6 +403,7 @@ void toggleSelectObj(bool select = true) {
 }
 
 void drawScenario() {
+    GUI::setLight(1, 0, 24, 10, true, false);
     glTranslatef(-offsetX, 0, -offsetZ);
 
     // Draw floor
@@ -470,9 +473,10 @@ void keyboardUp(unsigned char key, int x, int y) {
 }
 
 void draw(){
-    GUI::displayInit();
     glutKeyboardUpFunc(keyboardUp);
-    GUI::setLight(1, 0, 24, 10, true, false);
+
+    // Init
+    GUI::displayInit();
     GUI::drawOrigin(3.0);
 
     drawViewports();
