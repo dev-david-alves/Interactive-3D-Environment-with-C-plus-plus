@@ -422,6 +422,10 @@ void drawScenario() {
     glTranslatef(offsetX, 0, offsetZ);
 }
 
+void updateViewports() {
+    viewportID = (viewportID + 1) % (numViewports + 1);
+}
+
 void drawViewports() {
     float width = glutGUI::width;
     float height = glutGUI::height;
@@ -433,9 +437,11 @@ void drawViewports() {
     gluLookAt(glutGUI::cam->e.x,glutGUI::cam->e.y,glutGUI::cam->e.z, glutGUI::cam->c.x,glutGUI::cam->c.y,glutGUI::cam->c.z, glutGUI::cam->u.x,glutGUI::cam->u.y,glutGUI::cam->u.z);
     drawScenario();
 
+    // Player viewport
     if(selectedObj != -1) {
         Object* objPtr = objects[selectedObj];
         if(objPtr->getType() == "character" && objPtr->playerName == "Player") {
+            viewportID = numViewports + 1;
             Vetor3D tra = objPtr->getTranslation();
             Vetor3D rot = objPtr->getRotation();
             
@@ -451,11 +457,35 @@ void drawViewports() {
             float z = tra.z + cos(rot.y * M_PI / 180) - offsetZ;
 
             // Put light on that viewport
-            GUI::glScissoredViewport(0, 2 * height / 4, width / 2, height / 2);
+            GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
             glLoadIdentity();
             gluLookAt(tra.x - offsetX, tra.y + 3, tra.z - offsetZ, x, tra.y + 2.7, z, 0, 1, 0);
             drawScenario();
         }
+    }
+
+    // Other viewports
+    switch (viewportID) {
+        case 0:
+            GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
+            glLoadIdentity();
+            gluLookAt(37.5597, 24.1961, 27.6964, -4.08124, 3.22017, 9.91225, -0.386562, 0.907366, -0.165094);
+            drawScenario();
+            break;
+        case 1:
+            GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
+            glLoadIdentity();
+            gluLookAt(-24.6673, 25.0923, -45.725, -0.279888, -0.0280033, 4.59568, 0.178714, 0.912185, 0.368755);
+            drawScenario();
+            break;
+        case 2:
+            GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
+            glLoadIdentity();
+            gluLookAt(0.13474, 29.7279, -25.9732, 0.0197747, 8.41875, 5.61293, -0.00203556, 0.828989, 0.559261);
+            drawScenario();
+            break;
+        default:
+            break;
     }
 }
 
@@ -648,6 +678,10 @@ void keyboard(unsigned char key, int x, int y)
             break;
         case '7':
             updateCamera();
+
+            break;
+        case '8':
+            updateViewports();
 
             break;
         case '[': 
