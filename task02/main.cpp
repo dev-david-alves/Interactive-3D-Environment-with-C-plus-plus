@@ -23,8 +23,12 @@ using namespace std;
 
 int cameraID = 5;
 int numCams = 7;
-int viewportID = 0;
+int viewportID = -1;
 int numViewports = 3;
+int projectionType = 3;
+int projectionVariant = -1;
+float customFov = 30.;
+bool canPick = true;
 
 int height = 24; // y
 int width = 38;  // x
@@ -79,6 +83,54 @@ void updateCamera() {
         default:
             glutGUI::cam = new CameraJogo(-0.354489, 52.8415, 49.0697, -0.374595, 3.00397, 0.195141, -0.00029371, 0.700175, -0.713971);
             break;
+    }
+}
+
+void updateProjectionVariant() {
+    projectionVariant = (projectionVariant + 1) % 3;
+
+    if(projectionType == 0) {
+        glutGUI::perspective = true;
+        customFov = 120.;
+
+        switch (projectionVariant) {
+            case 0:
+                glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465, -0.000609205, 0.922857, -0.385142);
+                break;
+            case 1:
+                glutGUI::cam = new CameraDistante(22.1825, 14.2089, 22.5286, 0.0963417, 4.7133, -3.39075, -0.174209, 0.963252, -0.204444);
+                break;
+            case 2:
+                glutGUI::cam = new CameraDistante(-4.02123, 9.03022, 8.23398, -8.43224, 11.8215, -1.05152, 0.112437, 0.965058, 0.236688);
+                break;
+            default:
+                glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465, -0.000609205, 0.922857, -0.385142);
+                break;
+        }
+    } else if(projectionType == 1) {
+        glutGUI::perspective = false;
+
+        switch (projectionVariant) {
+            case 0:
+                glutGUI::cam = new CameraDistante(17.4254, 16.7893, 51.7745, 19.29, 16.8944, -1.04446, -7.01482e-05, 0.999998, 0.00198716);
+                break;
+            case 1:
+                glutGUI::cam = new CameraDistante(-8.14163, 92.8231, 19.5612, 0.972699, 5.74649, 19.648, 0.994521, 0.104106, 0.0094752);
+                break;
+            case 2:
+                glutGUI::cam = new CameraDistante(-23.2174, 7.37621, 19.4324, 18.9848, 7.32008, 19.5489, 0.00133001, 0.999999, 3.67178e-06);
+                break;
+            default:
+                glutGUI::cam = new CameraDistante(17.4254, 16.7893, 51.7745, 19.29, 16.8944, -1.04446, -7.01482e-05, 0.999998, 0.00198716);
+                break;
+        }
+    } else if(projectionType == 2) {
+        cout << "Perspective type not implemented yet.\n";
+    } else {
+        glutGUI::perspective = true;
+        customFov = 30.;
+        cameraID = 5;
+        updateCamera();
     }
 }
 
@@ -403,6 +455,7 @@ void toggleSelectObj(bool select = true) {
 }
 
 void drawScenario() {
+    GUI::drawOrigin(3.0);
     GUI::setLight(1, 0, 24, 10, true, false);
     glTranslatef(-offsetX, 0, -offsetZ);
 
@@ -429,9 +482,21 @@ void updateViewports() {
 void drawViewports() {
     float width = glutGUI::width;
     float height = glutGUI::height;
+    const float ar = height>0 ? (float) width / (float) height : 1.0;
+    const float orthof = 0.04;
+
+    glMatrixMode(GL_PROJECTION);
+    if(!glutGUI::picking) {
+        glLoadIdentity();
+    }
+
+    if(glutGUI::perspective) {
+        gluPerspective(customFov, ar, 0.1, 1000.);
+    } else {
+        glOrtho(-orthof * width, orthof,-orthof * height,orthof * height, 0.0, 100.);
+    }
 
     glMatrixMode(GL_MODELVIEW);
-
     glViewport(0, 0, width, height);
     glLoadIdentity();
     gluLookAt(glutGUI::cam->e.x,glutGUI::cam->e.y,glutGUI::cam->e.z, glutGUI::cam->c.x,glutGUI::cam->c.y,glutGUI::cam->c.z, glutGUI::cam->u.x,glutGUI::cam->u.y,glutGUI::cam->u.z);
@@ -504,10 +569,10 @@ void keyboardUp(unsigned char key, int x, int y) {
 
 void draw(){
     glutKeyboardUpFunc(keyboardUp);
+    canPick = !(!glutGUI::perspective || (glutGUI::perspective && customFov != 30.));
 
     // Init
     GUI::displayInit();
-    GUI::drawOrigin(3.0);
 
     drawViewports();
 
@@ -536,6 +601,8 @@ void draw(){
 //-------------------picking start ------------------
 
 int picking(GLint cursorX, GLint cursorY, int w, int h) {
+    if(!canPick) return 0;
+
     int BUFSIZE = 512;
     GLuint selectBuf[512];
 
@@ -743,6 +810,23 @@ void keyboard(unsigned char key, int x, int y)
                     }
                 }
             }
+            break;
+        case '~':
+            projectionType = (projectionType + 1) % 4;
+            projectionVariant = -1;
+            updateProjectionVariant();
+
+            break;
+        case 'p':
+            updateProjectionVariant();
+
+            break;
+        case ';':
+            if(projectionType != 3) return;
+            
+            customFov = ((int) customFov + 10) % 120;
+            if(customFov < 30) customFov = 30;
+            
             break;
         default:
             break;
