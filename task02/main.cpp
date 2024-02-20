@@ -102,7 +102,7 @@ void updateProjectionVariant() {
                 glutGUI::cam = new CameraDistante(15.6342, 14.6921, 13.3225, -0.121987, 10.2937, -4.17344,  0., 1., 0.);
                 break;
             case 2:
-                glutGUI::cam = new CameraDistante(-4.02123, 9.56283, 8.23398, -8.43224, 12.3541, -1.05152, 0, 1, 0);
+                glutGUI::cam = new CameraDistante(-5.33653, 9.8339, 14.7601, -15.1616, 12.8533, 1.97791,  0., 1., 0.);
                 break;
             default:
                 glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465,  0., 1., 0.);
@@ -122,7 +122,7 @@ void updateProjectionVariant() {
                 glutGUI::cam = new CameraDistante(74, 24.7816, -28.4708, 37.5, 24.7816, -28.4708, 0, 1, 0);
                 break;
             case 2:
-                glutGUI::cam = new CameraDistante(0.0790872, 92.7794, -29.7485, 0, -1.57253, -29.7485, 0, 1, 0);
+                glutGUI::cam = new CameraDistante(0.04, 92.7794, -29.7485, 0, -1.57253, -29.7485, 0, 1, 0);
                 break;
             default:
                 glutGUI::cam = new CameraDistante(27.9903, 24.6903, 51.7745, 27.9903, 24.6903, 0, 0, 1, 0);
