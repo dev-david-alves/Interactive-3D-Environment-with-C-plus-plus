@@ -25,10 +25,11 @@ int cameraID = 5;
 int numCams = 7;
 int viewportID = -1;
 int numViewports = 3;
-int projectionType = 3;
+int projectionType = 4;
 int projectionVariant = -1;
 float customFov = 30.;
 bool canPick = true;
+float orthof = 0.03;
 
 int height = 24; // y
 int width = 38;  // x
@@ -69,64 +70,91 @@ void updateCamera() {
             glutGUI::cam = new CameraDistante(35.1502, 50.7328, -36.3078, -0.374595, 3.00397, 0.195141, -0.476882, 0.729706, 0.490012);
             break;
         case 2:
-            glutGUI::cam = new CameraJogo(-25.7932, 51.7887, -42.7752, -0.374595, 3.00397, 0.195141, 0.355825, 0.715231, 0.601526);
+            glutGUI::cam = new CameraDistante(-25.7932, 51.7887, -42.7752, -0.374595, 3.00397, 0.195141, 0.355825, 0.715231, 0.601526);
             break;
         case 3:
-            glutGUI::cam = new CameraJogo(-33.2456, 54.5045, 34.0059, -1.75942, 3.00397, -1.04871, 0.493013, 0.675026, -0.548888);
+            glutGUI::cam = new CameraDistante(-33.2456, 54.5045, 34.0059, -1.75942, 3.00397, -1.04871, 0.493013, 0.675026, -0.548888);
             break;
         case 4:
-            glutGUI::cam = new CameraJogo(-45.1375, 45.7314, -2.4365, -1.75942, 3.00397, -1.04871, 0.701202, 0.712609, 0.0224334);
+            glutGUI::cam = new CameraDistante(-45.1375, 45.7314, -2.4365, -1.75942, 3.00397, -1.04871, 0.701202, 0.712609, 0.0224334);
             break;
         case 5:
-            glutGUI::cam = new CameraJogo(-1.45606, 41.2756, -48.4239, -1.75942, 3.00397, -1.04871, -0.00402372, 0.777891, 0.628386);
+            glutGUI::cam = new CameraDistante(-1.45606, 41.2756, -48.4239, -1.75942, 3.00397, -1.04871, -0.00402372, 0.777891, 0.628386);
             break;
         default:
-            glutGUI::cam = new CameraJogo(-0.354489, 52.8415, 49.0697, -0.374595, 3.00397, 0.195141, -0.00029371, 0.700175, -0.713971);
+            glutGUI::cam = new CameraDistante(0, 72, 48, 0, 1, 0, 0, 1, 0);
             break;
     }
 }
 
 void updateProjectionVariant() {
-    projectionVariant = (projectionVariant + 1) % 3;
-
     if(projectionType == 0) {
+        cout << "Perspective with 120 fov\n";
+        projectionVariant = (projectionVariant + 1) % 3;
         glutGUI::perspective = true;
         customFov = 120.;
 
         switch (projectionVariant) {
             case 0:
-                glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465, -0.000609205, 0.922857, -0.385142);
+                glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465,  0., 1., 0.);
                 break;
             case 1:
-                glutGUI::cam = new CameraDistante(22.1825, 14.2089, 22.5286, 0.0963417, 4.7133, -3.39075, -0.174209, 0.963252, -0.204444);
+                glutGUI::cam = new CameraDistante(15.6342, 14.6921, 13.3225, -0.121987, 10.2937, -4.17344,  0., 1., 0.);
                 break;
             case 2:
-                glutGUI::cam = new CameraDistante(-4.02123, 9.03022, 8.23398, -8.43224, 11.8215, -1.05152, 0.112437, 0.965058, 0.236688);
+                glutGUI::cam = new CameraDistante(-4.02123, 9.56283, 8.23398, -8.43224, 12.3541, -1.05152, 0, 1, 0);
                 break;
             default:
-                glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465, -0.000609205, 0.922857, -0.385142);
+                glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465,  0., 1., 0.);
                 break;
         }
     } else if(projectionType == 1) {
+        cout << "Orthographic view\n";
+
+        projectionVariant = (projectionVariant + 1) % 3;
         glutGUI::perspective = false;
 
         switch (projectionVariant) {
             case 0:
-                glutGUI::cam = new CameraDistante(17.4254, 16.7893, 51.7745, 19.29, 16.8944, -1.04446, -7.01482e-05, 0.999998, 0.00198716);
+                glutGUI::cam = new CameraDistante(27.9903, 24.6903, 51.7745, 27.9903, 24.6903, 0, 0, 1, 0);
                 break;
             case 1:
-                glutGUI::cam = new CameraDistante(-8.14163, 92.8231, 19.5612, 0.972699, 5.74649, 19.648, 0.994521, 0.104106, 0.0094752);
+                glutGUI::cam = new CameraDistante(74, 24.7816, -28.4708, 37.5, 24.7816, -28.4708, 0, 1, 0);
                 break;
             case 2:
-                glutGUI::cam = new CameraDistante(-23.2174, 7.37621, 19.4324, 18.9848, 7.32008, 19.5489, 0.00133001, 0.999999, 3.67178e-06);
+                glutGUI::cam = new CameraDistante(0.0790872, 92.7794, -29.7485, 0, -1.57253, -29.7485, 0, 1, 0);
                 break;
             default:
-                glutGUI::cam = new CameraDistante(17.4254, 16.7893, 51.7745, 19.29, 16.8944, -1.04446, -7.01482e-05, 0.999998, 0.00198716);
+                glutGUI::cam = new CameraDistante(27.9903, 24.6903, 51.7745, 27.9903, 24.6903, 0, 0, 1, 0);
                 break;
         }
     } else if(projectionType == 2) {
-        cout << "Perspective type not implemented yet.\n";
+        cout << "Orthographic axonometric view\n";
+
+        projectionVariant = (projectionVariant + 1) % 3;
+        glutGUI::perspective = false;
+
+        switch (projectionVariant) {
+            case 0:
+                glutGUI::cam = new CameraDistante(51.1404, 54.7472, 4.53408, 30.8242, 25.2462, -12.1734, -0.576491, 0.665503, -0.474092);
+                break;
+            case 1:
+                glutGUI::cam = new CameraDistante(60.2538, 34.1738, 14.4989, 32.4709, 19.9109, -9.72665, -0.271986, 0.932619, -0.237161);
+                break;
+            case 2:
+                glutGUI::cam = new CameraDistante(63.1569, 41.9716, 1.43672, 32.3913, 23.4102, -15.03, -0.414041, 0.88287, -0.221608);
+                break;
+            default:
+                glutGUI::cam = new CameraDistante(51.1404, 54.7472, 4.53408, 30.8242, 25.2462, -12.1734, -0.576491, 0.665503, -0.474092);
+                break;
+        }
+    } else if(projectionType == 3) {
+        cout << "Oblique view\n";
+        glutGUI::perspective = false;
+
+        glutGUI::cam = new CameraDistante(35.3964, 25.1987, 37.6592, 29.0114, 15.7886, -1.18523, -0.0377098, 0.972598, -0.229413);
     } else {
+        cout << "(Default) Perspective with 30 fov\n";
         glutGUI::perspective = true;
         customFov = 30.;
         cameraID = 5;
@@ -456,7 +484,7 @@ void toggleSelectObj(bool select = true) {
 
 void drawScenario() {
     GUI::drawOrigin(3.0);
-    GUI::setLight(1, 0, 24, 10, true, false);
+    GUI::setLight(1, 20, 38, 10, true, false);
     glTranslatef(-offsetX, 0, -offsetZ);
 
     // Draw floor
@@ -483,7 +511,6 @@ void drawViewports() {
     float width = glutGUI::width;
     float height = glutGUI::height;
     const float ar = height>0 ? (float) width / (float) height : 1.0;
-    const float orthof = 0.04;
 
     glMatrixMode(GL_PROJECTION);
     if(!glutGUI::picking) {
@@ -812,7 +839,7 @@ void keyboard(unsigned char key, int x, int y)
             }
             break;
         case '~':
-            projectionType = (projectionType + 1) % 4;
+            projectionType = (projectionType + 1) % 5;
             projectionVariant = -1;
             updateProjectionVariant();
 
@@ -822,7 +849,7 @@ void keyboard(unsigned char key, int x, int y)
 
             break;
         case ';':
-            if(projectionType != 3) return;
+            if(projectionType != 4) return;
             
             customFov = ((int) customFov + 10) % 120;
             if(customFov < 30) customFov = 30;
@@ -859,5 +886,6 @@ int main()
     objects[0]->playerName = "Player";
     objects[0]->setRotation(Vetor3D(0, 180, 0));
     
+    updateCamera();
     GUI gui = GUI(800, 600, draw, keyboard, mouse);
 }
