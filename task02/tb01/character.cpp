@@ -14,7 +14,7 @@ Character::Character(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initia
 
 
 
-void Character::draw() {
+void Character::draw(bool isShadow) {
     float Sr = 1.0;
     float Sg = 0.75;
     float Sb = 0.50;
@@ -37,6 +37,20 @@ void Character::draw() {
         Cb = 0.0;
 
         Lr = 1.0;
+        Lg = 0.0;
+        Lb = 0.0;
+    }
+
+    if(isShadow) {
+        Sr = 0.0;
+        Sg = 0.0;
+        Sb = 0.0;
+
+        Cr = 0.0;
+        Cg = 0.0;
+        Cb = 0.0;
+
+        Lr = 0.0;
         Lg = 0.0;
         Lb = 0.0;
     }

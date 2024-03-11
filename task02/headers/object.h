@@ -27,7 +27,7 @@ class Object {
         
         Object();
 
-        virtual void draw();
+        virtual void draw(bool isShadow = false);
         void drawOrigin(float size = 1.0);
 
         void setType(string type);

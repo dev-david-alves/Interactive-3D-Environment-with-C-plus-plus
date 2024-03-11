@@ -12,7 +12,7 @@ Sheep::Sheep(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialScale) 
     this->setType("sheep");
 };
 
-void Sheep::draw() {
+void Sheep::draw(bool isShadow) {
     float Sr = 1.0;
     float Sg = 0.75;
     float Sb = 0.50;
@@ -27,6 +27,16 @@ void Sheep::draw() {
         Sb = 0.0;
 
         Cr = 1.0;
+        Cg = 0.0;
+        Cb = 0.0;
+    }
+
+    if(isShadow) {
+        Sr = 0.0;
+        Sg = 0.0;
+        Sb = 0.0;
+
+        Cr = 0.0;
         Cg = 0.0;
         Cb = 0.0;
     }

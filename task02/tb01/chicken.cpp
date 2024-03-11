@@ -12,7 +12,7 @@ Chicken::Chicken(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialSca
     this->setType("chicken");
 };
 
-void Chicken::draw() {
+void Chicken::draw(bool isShadow) {
     float Sr = 1.0;
     float Sg = 1.0;
     float Sb = 1.0;
@@ -43,6 +43,24 @@ void Chicken::draw() {
         Yb = 0.0;
 
         Rr = 1.0;
+        Rg = 0.0;
+        Rb = 0.0;
+    }
+
+    if(isShadow) {
+        Sr = 0.0;
+        Sg = 0.0;
+        Sb = 0.0;
+
+        Ydr = 0.0;
+        Ydg = 0.0;
+        Ydb = 0.0;
+
+        Yr = 0.0;
+        Yg = 0.0;
+        Yb = 0.0;
+
+        Rr = 0.0;
         Rg = 0.0;
         Rb = 0.0;
     }

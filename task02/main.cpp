@@ -876,9 +876,9 @@ int main()
     if(isFileEmpty()) {
         createCharacter(2);
         createTrees(3);
-        // createSheep(3);
-        // createSpider(3);
-        // createChicken(3);
+        createSheep(3);
+        createSpider(3);
+        createChicken(3);
     } else {
         readCSV();
     }

@@ -12,7 +12,7 @@ class Spider: public Object {
         Spider(Vetor3D initialPos = Vetor3D(0, 0, 0), Vetor3D initialRotation = Vetor3D(0, 0, 0), Vetor3D initialScale = Vetor3D(1, 1, 1));
 
         void drawPart();
-        void draw() override;
+        void draw(bool isShadow = false) override;
 };
 
 #endif

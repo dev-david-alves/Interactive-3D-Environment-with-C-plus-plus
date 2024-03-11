@@ -40,7 +40,7 @@ Tree::Tree(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialScale) {
 
 Utils utilsT = Utils();
 
-void Tree::draw() {
+void Tree::draw(bool isShadow) {
     float r = 0.0;
     float g = 1.0;
     float b = 0.0;
@@ -48,6 +48,12 @@ void Tree::draw() {
     if(this->getIsSelected()) {
         r = 1.0;
         g = 0.0;
+    }
+
+    if(isShadow) {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
     }
 
     float colorsL[6][3] = {
@@ -79,6 +85,10 @@ void Tree::draw() {
                 GUI::setColor(1.0, 0.0, 0.0); 
             } else {
                 GUI::setColor(0.6, 0.2, 0.2); 
+            }
+            
+            if(isShadow) {
+                GUI::setColor(0.0, 0.0, 0.0);
             }
 
             glPushMatrix();

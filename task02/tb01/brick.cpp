@@ -16,7 +16,7 @@ Brick::Brick(Vetor3D initialPos, Vetor3D initialRotation, Vetor3D initialScale) 
 
 Utils utils = Utils();
 
-void Brick::draw() {
+void Brick::draw(bool isShadow) {
     float colors[6][3] = {
         {0.6, 0.2, 0.2}, // back
         {0.6, 0.2, 0.2}, // front
@@ -29,6 +29,14 @@ void Brick::draw() {
     if(this->getIsSelected()) {
         for(int i = 0; i < 6; i++) {
             colors[i][0] = 1.0;
+            colors[i][1] = 0.0;
+            colors[i][2] = 0.0;
+        }
+    }
+
+    if(isShadow) {
+        for(int i = 0; i < 6; i++) {
+            colors[i][0] = 0.0;
             colors[i][1] = 0.0;
             colors[i][2] = 0.0;
         }

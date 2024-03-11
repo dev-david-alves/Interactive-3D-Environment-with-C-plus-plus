@@ -5,7 +5,7 @@ using namespace std;
 
 Object::Object() {};
 
-void Object::draw() {
+void Object::draw(bool isShadow) {
     Vetor3D tra = this->getTranslation();
     Vetor3D rot = this->getRotation();
     Vetor3D scl = this->getScaling();
