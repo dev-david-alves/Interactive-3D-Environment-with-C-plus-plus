@@ -20,7 +20,7 @@ void GUI::GLUTInit()
     int argc = 0; char **argv = NULL;
     glutInit(&argc, argv);
     glutInitWindowSize(wWidth,wHeight);
-    glutInitWindowPosition(10,10);
+    glutInitWindowPosition(500, 10);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
     id = glutCreateWindow(wTitle);

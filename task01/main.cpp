@@ -21,7 +21,7 @@ using namespace std;
 
 // Declarations
 
-int cameraID = 7;
+int cameraID = 5;
 int numCams = 7;
 
 int height = 24; // y
@@ -57,25 +57,25 @@ void updateCamera() {
 
     switch (cameraID) {
         case 0:
-            glutGUI::cam = new CameraDistante(-23.0636, 23.6954, 19.373, 0.907788, 2.77401, -0.762525, 0.425455, 0.831428, -0.357374);
+            glutGUI::cam = new CameraDistante(-23.5989, 22.9649, 19.4948, 0.37254, 2.04354, -0.640755, 0.425455, 0.831428, -0.357374);
             break;
         case 1:
-            glutGUI::cam = new CameraDistante(19.7316, 23.4186, 24.4811, 0.907788, 2.77401, -0.762525, -0.327753, 0.836295, -0.439532);
+            glutGUI::cam = new CameraDistante(18.3825, 23.5236, 25.4013, -0.441369, 2.87897, 0.157681, -0.327753, 0.836295, -0.439532);
             break;
         case 2:
-            glutGUI::cam = new CameraJogo(-24.602, 20.5858, -21.9702, 0.907788, 2.77401, -0.762525, 0.363759, 0.881037, 0.302412);
+            glutGUI::cam = new CameraDistante(-25.7364, 20.3646, -20.7914, -0.226611, 2.55285, 0.416248, 0.363759, 0.881037, 0.302412);
             break;
         case 3:
-            glutGUI::cam = new CameraJogo(29.503, 19.5565, -18.6074, 0.907788, 2.77401, -0.762525, -0.378122, 0.895177, 0.235968);
+            glutGUI::cam = new CameraDistante(29.503, 19.5565, -18.6074, 0.907788, 2.77401, -0.762525, -0.378122, 0.895177, 0.235968);
             break;
         case 4:
-            glutGUI::cam = new CameraJogo(8.74211, 13.2678, 19.8554, -0.591092, 3.4424, 0.529852, -0.18103, 0.909241, -0.374845);
+            glutGUI::cam = new CameraDistante(8.74211, 13.2678, 19.8554, -0.591092, 3.4424, 0.529852, -0.18103, 0.909241, -0.374845);
             break;
         case 5:
-            glutGUI::cam = new CameraJogo(-16.1378, 13.9302, 14.8626, -0.591092, 3.4424, 0.529852, 0.326687, 0.895862, -0.301178);
+            glutGUI::cam = new CameraDistante(-16.1378, 13.9302, 14.8626, -0.591092, 3.4424, 0.529852, 0.326687, 0.895862, -0.301178);
             break;
         default:
-            glutGUI::cam = new CameraJogo(0, 32, 32, 0, 1, 0, 0, 1, 0);
+            glutGUI::cam = new CameraDistante(0, 33.7821, 32, 0, 2.78213, 0, 0, 1, 0);
             break;
     }
 }
@@ -404,7 +404,7 @@ void draw()
 {
     GUI::displayInit();
 
-    GUI::setLight(1, 0, 24, 24, true, false);
+    GUI::setLight(0, 3, 20, 5, true, false, false, false);
     // glDisable(GL_CULL_FACE);
     
     // Custom
@@ -574,7 +574,7 @@ void keyboard(unsigned char key, int x, int y)
 
             break;
         case ':':
-            cout << "Posicao da camera: " << glutGUI::cam->e.x << ", " << glutGUI::cam->e.y << ", " << glutGUI::cam->e.z << ", " 
+            cout << "Camera pos: " << glutGUI::cam->e.x << ", " << glutGUI::cam->e.y << ", " << glutGUI::cam->e.z << ", " 
             << glutGUI::cam->c.x << ", " << glutGUI::cam->c.y << ", " << glutGUI::cam->c.z << ", "
             << glutGUI::cam->u.x << ", " << glutGUI::cam->u.y << ", " << glutGUI::cam->u.z << endl;
             
@@ -606,6 +606,7 @@ int main()
         readCSV();
     }
 
+    updateCamera();
     GUI gui = GUI(800, 600, draw, keyboard);
 
 }
