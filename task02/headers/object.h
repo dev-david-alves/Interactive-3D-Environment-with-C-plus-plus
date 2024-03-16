@@ -14,6 +14,7 @@ class Object {
 
         bool isSelected = false;
         bool canDrawOrigin = false;
+        bool drawShadow = false;
         string type = "object";
 
     public:
@@ -38,6 +39,9 @@ class Object {
 
         void setCanDrawOrigin(bool canDraw);
         bool getCanDrawOrigin();
+
+        void setDrawShadow(bool drawShadow);
+        bool getDrawShadow();
 
         void setTranslation(Vetor3D vector);
         Vetor3D getTranslation();

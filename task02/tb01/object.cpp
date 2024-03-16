@@ -51,6 +51,14 @@ bool Object::getCanDrawOrigin() {
     return this->canDrawOrigin;
 }
 
+void Object::setDrawShadow(bool drawShadow) {
+    this->drawShadow = drawShadow;
+}
+
+bool Object::getDrawShadow() {
+    return this->drawShadow;
+}
+
 // Setters
 
 void Object::setTranslation(Vetor3D v) {

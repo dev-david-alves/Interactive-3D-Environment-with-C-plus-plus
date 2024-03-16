@@ -96,13 +96,19 @@ void Spider::drawPart() {
     glPopMatrix();
 }
 
-void Spider::draw() {
+void Spider::draw(bool isShadow) {
     float Sr = 0.5;
     float Sg = 0.0;
     float Sb = 0.0;
 
     if(this->getIsSelected()) {
         Sr = 1.0;
+        Sg = 0.0;
+        Sb = 0.0;
+    }
+
+    if(isShadow) {
+        Sr = 0.0;
         Sg = 0.0;
         Sb = 0.0;
     }

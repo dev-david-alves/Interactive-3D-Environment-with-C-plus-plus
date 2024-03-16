@@ -82,7 +82,7 @@ void updateCamera() {
             glutGUI::cam = new CameraDistante(-1.45606, 41.2756, -48.4239, -1.75942, 3.00397, -1.04871, -0.00402372, 0.777891, 0.628386);
             break;
         default:
-            glutGUI::cam = new CameraDistante(0, 72, 48, 0, 1, 0, 0, 1, 0);
+            glutGUI::cam = new CameraDistante(0, 74.1397, 46.9359, 0, 4.71379, 0, 0, 1, 0);
             break;
     }
 }
@@ -99,10 +99,10 @@ void updateProjectionVariant() {
                 glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465,  0., 1., 0.);
                 break;
             case 1:
-                glutGUI::cam = new CameraDistante(15.6342, 14.6921, 13.3225, -0.121987, 10.2937, -4.17344,  0., 1., 0.);
+                glutGUI::cam = new CameraDistante(4.16666, 13.3843, 19.4994, -6.54092, 13.7317, -5.01384, 0., 1, 0.);
                 break;
             case 2:
-                glutGUI::cam = new CameraDistante(-5.33653, 9.8339, 14.7601, -15.1616, 12.8533, 1.97791,  0., 1., 0.);
+                glutGUI::cam = new CameraDistante(3.3179, 9.23921, 19.3448, -13.8904, 32.812, 2.69301, 0., 1, 0.);
                 break;
             default:
                 glutGUI::cam = new CameraDistante(-0.649749, 16.3132, 17.8613, -0.684494, 7.14594, -4.10465,  0., 1., 0.);
@@ -482,13 +482,76 @@ void toggleSelectObj(bool select = true) {
     }
 }
 
+bool pontual = true;
+float kShadow = 0.0;
+bool drawShadow = false;
+int shadowAngle = 45;
+
+void drawShadowScene(Vetor3D v, int width, int height) {
+    glPushMatrix();
+        glDisable(GL_CULL_FACE);
+        GUI::setColor(0.5, 0.5, 0.5);
+
+        glEnable(GL_CULL_FACE);
+
+        glBegin(GL_QUADS);
+            glNormal3f(0, 0, 1);
+            glVertex3f(v.x, v.y, v.z);
+            glVertex3f(v.x + width, v.y, v.z);
+            glVertex3f(v.x + width, v.y + height, v.z);
+            glVertex3f(v.x, v.y + height, v.z);
+        glEnd();
+    glPopMatrix();
+}
+
+void drawShadowFloor() {
+    vector<vector<vector<int>>> shadowTerrain(1, vector<vector<int>>(width, vector<int>(depth, 0)));
+    for(int i = 0; i < width; i++) {
+        for(int j = 0; j < depth; j++) {
+            shadowTerrain[0][i][j] = 1;
+        }
+    }
+
+    for(int i = 0; i < 1; i++) {
+        for(int j = 0; j < width; j++) {
+            for(int k = 0; k < depth; k++) {
+                if(shadowTerrain[i][j][k] == 1) {
+                    glPushMatrix();
+                        Vetor3D initialPos = Vetor3D(j, i, k);
+                        nBrick = new Brick(initialPos);
+                        glTranslatef(0, -scaleFactor, 0);
+                        nBrick->draw(shadowTerrain);
+                    glPopMatrix();
+                }
+            }
+        }
+    }
+}
+
 void drawScenario() {
     GUI::drawOrigin(3.0);
-    GUI::setLight(1, 20, 38, 10, true, false);
+    float lightPos[4] = {5 + glutGUI::lx, 35 + glutGUI::ly, 15 + glutGUI::lz, pontual};
+    GUI::setLight(0, lightPos[0], lightPos[1], lightPos[2], true, false, false, false, pontual);
+
     glTranslatef(-offsetX, 0, -offsetZ);
 
     // Draw floor
-    drawFloor();
+    if(!drawShadow) {
+        drawFloor();
+    } else {
+        drawShadowFloor();
+        glPushMatrix();
+            drawShadowScene(Vetor3D(0, 0, -0.01), 32, 32);
+        glPopMatrix();
+        glPushMatrix();
+            glRotatef(90, 0, 1, 0);
+            drawShadowScene(Vetor3D(-32, 0, -0.01), 32, 32);
+        glPopMatrix();
+        glPushMatrix();
+            glRotatef(-shadowAngle, 1, 0, 0);
+            drawShadowScene(Vetor3D(0, -shadowAngle / 9, shadowAngle / 9), 20, 10);
+        glPopMatrix();
+    }
 
     // Draw objects
     int indexName = 1;
@@ -498,6 +561,62 @@ void drawScenario() {
             objPtr->draw();
             indexName++;
         glPopName();
+    }
+
+    if(selectedObj != -1) {
+        Object* objPtr = objects[selectedObj];
+        
+        if(objPtr->getDrawShadow()) {
+            GLfloat shadow[4][4];
+
+            // Bottom
+            glPushMatrix();
+                GLfloat bottomSurface[4] = {0, 1, 0, -kShadow};
+                GUI::shadowMatrix(shadow, bottomSurface, lightPos);
+                glMultTransposeMatrixf((GLfloat*) shadow);
+
+                glPushMatrix();
+                    glTranslatef(0, 0.01, 0);
+                    objPtr->draw(true);
+                glPopMatrix();
+            glPopMatrix();
+
+            // Front
+            glPushMatrix();
+                GLfloat frontSurface[4] = {0, 0, 1, 0};
+                GUI::shadowMatrix(shadow, frontSurface, lightPos);
+                glMultTransposeMatrixf((GLfloat*) shadow);
+
+                glPushMatrix();
+                    objPtr->draw(true);
+                glPopMatrix();
+            glPopMatrix();
+
+            // Left
+            glPushMatrix();
+                GLfloat leftSurface[4] = {1, 0, 0, 0};
+                GUI::shadowMatrix(shadow, leftSurface, lightPos);
+                glMultTransposeMatrixf((GLfloat*) shadow);
+
+                glPushMatrix();
+                    objPtr->draw(true);
+                glPopMatrix();
+            glPopMatrix();
+
+            // Inclined Surface
+            glPushMatrix();
+                GLfloat inclinedSurface[4] = {0, 1, 1, -sqrt(pow(shadowAngle / 9, 2) * 2) - 0.1};
+                GUI::shadowMatrix(shadow, inclinedSurface, lightPos);
+                glMultTransposeMatrixf((GLfloat*) shadow);
+
+                glPushMatrix();
+                    glTranslatef(0, 0, 0);
+                    objPtr->draw(true);
+                glPopMatrix();
+            glPopMatrix();
+
+             
+        }
     }
 
     glTranslatef(offsetX, 0, offsetZ);
@@ -561,19 +680,19 @@ void drawViewports() {
         case 0:
             GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
             glLoadIdentity();
-            gluLookAt(37.5597, 24.1961, 27.6964, -4.08124, 3.22017, 9.91225, -0.386562, 0.907366, -0.165094);
+            gluLookAt(39.2893, 25.2976, 37.5985, 0.883885, 2.41776, 0.562173, 0., 1., 0.);
             drawScenario();
             break;
         case 1:
             GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
             glLoadIdentity();
-            gluLookAt(-24.6673, 25.0923, -45.725, -0.279888, -0.0280033, 4.59568, 0.178714, 0.912185, 0.368755);
+            gluLookAt(-1.40453, 34.5317, -47.784, -1.05116, 2.41776, 0.576312, 0., 1., 0.);
             drawScenario();
             break;
         case 2:
             GUI::glScissoredViewport(0, 3 * height / 4, width / 4, height / 4);
             glLoadIdentity();
-            gluLookAt(0.13474, 29.7279, -25.9732, 0.0197747, 8.41875, 5.61293, -0.00203556, 0.828989, 0.559261);
+            gluLookAt(-45.2438, 51.906, -0.224827, -1.05116, 2.41776, 0.576312, 0., 1., 0.);
             drawScenario();
             break;
         default:
@@ -606,18 +725,20 @@ void draw(){
     toggleSelectObj(true);
 
     if (selectedObj != -1) {
-        Object* objPtr = objects[selectedObj];
+        if(!glutGUI::trans_luz) {
+            Object* objPtr = objects[selectedObj];
 
-        Vetor3D tra = objPtr->getTranslation();
-        Vetor3D rot = objPtr->getRotation();
-        Vetor3D scl = objPtr->getScaling();
+            Vetor3D tra = objPtr->getTranslation();
+            Vetor3D rot = objPtr->getRotation();
+            Vetor3D scl = objPtr->getScaling();
 
-        objPtr->setTranslation(Vetor3D(tra.x + glutGUI::dtx * 10.0, tra.y + glutGUI::dty * 10.0, tra.z + glutGUI::dtz * 10.0));
-        objPtr->setRotation(Vetor3D(rot.x + glutGUI::dax * 10.0, rot.y + glutGUI::day * 10.0, rot.z + glutGUI::daz * 10.0));
-        objPtr->setScaling(Vetor3D(scl.x + glutGUI::dsx, scl.y + glutGUI::dsy, scl.z + glutGUI::dsz));
+            objPtr->setTranslation(Vetor3D(tra.x + glutGUI::dtx * 10.0, tra.y + glutGUI::dty * 10.0, tra.z + glutGUI::dtz * 10.0));
+            objPtr->setRotation(Vetor3D(rot.x + glutGUI::dax * 10.0, rot.y + glutGUI::day * 10.0, rot.z + glutGUI::daz * 10.0));
+            objPtr->setScaling(Vetor3D(scl.x + glutGUI::dsx, scl.y + glutGUI::dsy, scl.z + glutGUI::dsz));
 
-        glutGUI::trans_obj = true;
-        glutGUI::trans_luz = false;
+            glutGUI::trans_obj = true;
+        }
+        // glutGUI::trans_luz = false;
     } else {
         glutGUI::trans_obj = false;
     }
@@ -669,8 +790,8 @@ void keyboard(unsigned char key, int x, int y)
 
     switch (key) {
         case 'l':
-            toggleSelectObj(false);
-            selectedObj = -1;
+            // toggleSelectObj(false);
+            // selectedObj = -1;
 
             if(glutGUI::trans_luz) {
                 glutGUI::trans_luz = false;
@@ -795,6 +916,30 @@ void keyboard(unsigned char key, int x, int y)
             }
 
             break;
+        case 'k':
+            drawShadow = !drawShadow;
+
+            if(!drawShadow) {
+                offsetY = 15;
+                cameraID = 5;
+                updateCamera();
+            } else {
+                offsetY = 1;
+                glutGUI::cam = new CameraDistante(30.0032, 33.688, 74.9593, 3.99947, 1.28568, 0, -0.123912, 0.925774, -0.357194);
+            }
+
+            break;
+        case 's':
+            if (selectedObj != -1) {
+                Object* objPtr = objects[selectedObj];
+                objPtr->setDrawShadow(!objPtr->getDrawShadow());
+            }
+
+            break;
+        case 'h':
+            pontual = !pontual;
+
+            break;
         case 'S': 
             createTerrainCSV(brickArr);
             createCSV(objects);
@@ -804,7 +949,7 @@ void keyboard(unsigned char key, int x, int y)
             cout << "Camera pos: " << glutGUI::cam->e.x << ", " << glutGUI::cam->e.y << ", " << glutGUI::cam->e.z << ", " 
             << glutGUI::cam->c.x << ", " << glutGUI::cam->c.y << ", " << glutGUI::cam->c.z << ", "
             << glutGUI::cam->u.x << ", " << glutGUI::cam->u.y << ", " << glutGUI::cam->u.z << endl;
-            
+
             break;
         case 'a':
             if(selectedObj != -1) {
@@ -854,6 +999,12 @@ void keyboard(unsigned char key, int x, int y)
             customFov = ((int) customFov + 10) % 120;
             if(customFov < 30) customFov = 30;
             
+            break;
+        case '(': 
+            shadowAngle = min(shadowAngle + 9, 45);
+            break;
+        case ')':
+            shadowAngle = max(shadowAngle - 9, 0);
             break;
         default:
             break;
