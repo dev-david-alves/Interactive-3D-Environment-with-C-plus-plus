@@ -1,4 +1,4 @@
-# Gym Exercises Website
+# Interactive 3D Environment with C++
 
 ## About the projetct
 In this project you will find an interactive 3D environment, similar to Minecraft, developed by me to obtain grades in the computer graphics discipline at the Federal University of Ceará.
@@ -32,13 +32,25 @@ In this project you will find an interactive 3D environment, similar to Minecraf
     - sudo apt-get install libsdl1.2-dev
     - sudo apt-get install libsdl-image1.2-dev
 
+- Open the task02 folder (it's a full version, including task01)
+- Run the following command if you are running through cmd like me: qmake main.pro && make && ./run/main
+- Or run in the QtCreator otherwise
+
 ## Images of the project
 
-<img src="https://github.com/dev-david-alves/Gym-Exercises-Website/blob/main/project-images/gym-img-1.png?raw=true" />
-<img src="https://github.com/dev-david-alves/Gym-Exercises-Website/blob/main/project-images/gym-img-2.png?raw=true" />
-<img src="https://github.com/dev-david-alves/Gym-Exercises-Website/blob/main/project-images/gym-img-3.png?raw=true" />
-<img src="https://github.com/dev-david-alves/Gym-Exercises-Website/blob/main/project-images/gym-img-4.png?raw=true" />
-<img src="https://github.com/dev-david-alves/Gym-Exercises-Website/blob/main/project-images/gym-img-5.png?raw=true" />
+### A square world where you can create, edit and delete objects (player, some mobs, and tree)
+<img src="https://github.com/dev-david-alves/computer-graphics/blob/main/Images/img1.png?raw=true" />
+
+### You can select and drag a object around
+<img src="https://github.com/dev-david-alves/computer-graphics/blob/main/Images/img2.png?raw=true" />
+
+### You can rotate, translate and apply scaling to a object
+<img src="https://github.com/dev-david-alves/computer-graphics/blob/main/Images/img3.png?raw=true" />
+
+### You can move the player character (at index 0) with [A,W,S,D] to see his vision
+<img src="https://github.com/dev-david-alves/computer-graphics/blob/main/Images/img4.png?raw=true" />
+
+### And much more, like shadows and other stuff!!! Try it out
 
 ##
 
